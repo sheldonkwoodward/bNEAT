@@ -1,3 +1,4 @@
+#include <iostream>
 #include "src/ANN.hpp"
 
 
@@ -25,7 +26,7 @@ int main() {
     inputs.push_back(1.0);
     inputs.push_back(1.0);
     inputs.push_back(1.0);
-    while (true) ann.compute(inputs);
+    std::cout << ann.compute(inputs)[0] << std::endl;
 
     return 0;
 }

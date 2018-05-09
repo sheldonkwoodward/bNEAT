@@ -49,8 +49,8 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
 
     // create input vector
     std::deque<float*> inputVector = std::deque<float*>();
-    for (int node = 0; node < nodes.size(); node++) {
-        inputVector.push_back(nodes[node].getValuePtr());
+    for (auto &node : nodes) {
+        inputVector.push_back(node.getValuePtr());
     }
 
     // feed network
@@ -60,15 +60,12 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
         for (int step = 0; step < nodes.size(); step++) {
             *currentInput += weights[weightRow][step] * *inputVector[step];
         }
-        if (*currentInput < 0) *currentInput = static_cast<float>(*currentInput / 100.0);
+        if (*currentInput < 0) *currentInput = static_cast<float>(*currentInput / 100.0); // activation function
     }
 
+    // gather outputs
     std::deque<float> outputs = std::deque<float>();
-    for (auto node : outputNodes) {
-        std::cout << node->getValue() << " ";
-        outputs.push_back(node->getValue());
-    }
-    std::cout << std::endl;
+    for (auto node : outputNodes) outputs.push_back(node->getValue());
 
     return outputs;
 }
