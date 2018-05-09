@@ -30,35 +30,39 @@ void ANN::determineInputOutput() {
     }
 }
 
+void ANN::determineWeightMatrix() {
+    weightMatrix = std::deque<std::deque<float>>();
+    for (int row = 0; row < nodes.size() - inputNodes.size(); row++) {
+        weightMatrix.emplace_back();
+        for (int col = 0; col < nodes.size(); col++) {
+            weightMatrix[row].push_back(0.0);
+        }
+    }
+    for (auto cg : genome) {
+        weightMatrix[cg.getTo()->getNodeNum() - inputNodes.size()][cg.getFrom()->getNodeNum()] = cg.getWeight();
+    }
+}
+
+void ANN::setup() {
+    determineInputOutput();
+    determineWeightMatrix();
+}
+
 std::deque<float> ANN::compute(std::deque<float> inputs) {
     // set inputs
     if (inputs.size() != inputNodes.size()) return std::deque<float>();
     for (int i = 0; i < inputs.size(); i++) inputNodes[i]->setValue(inputs[i]);
 
-    // create weight matrix
-    std::deque<std::deque<float>> weights = std::deque<std::deque<float>>();
-    for (int row = 0; row < nodes.size() - inputNodes.size(); row++) {
-        weights.emplace_back();
-        for (int col = 0; col < nodes.size(); col++) {
-            weights[row].push_back(0.0);
-        }
-    }
-    for (auto cg : genome) {
-        weights[cg.getTo()->getNodeNum() - inputNodes.size()][cg.getFrom()->getNodeNum()] = cg.getWeight();
-    }
-
-    // create input vector
-    std::deque<float*> inputVector = std::deque<float*>();
-    for (auto &node : nodes) {
-        inputVector.push_back(node.getValuePtr());
-    }
+    // set input vector
+    inputVector = std::deque<float*>();
+    for (auto &node : nodes) inputVector.push_back(node.getValuePtr());
 
     // feed network
-    for (int weightRow = 0; weightRow < weights.size(); weightRow++) {
+    for (int weightRow = 0; weightRow < weightMatrix.size(); weightRow++) {
         float* currentInput = inputVector[weightRow + inputNodes.size()];
         *currentInput = 0.0;
         for (int step = 0; step < nodes.size(); step++) {
-            *currentInput += weights[weightRow][step] * *inputVector[step];
+            *currentInput += weightMatrix[weightRow][step] * *inputVector[step];
         }
         if (*currentInput < 0) *currentInput = static_cast<float>(*currentInput / 100.0); // activation function
     }
@@ -66,7 +70,6 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     // gather outputs
     std::deque<float> outputs = std::deque<float>();
     for (auto node : outputNodes) outputs.push_back(node->getValue());
-
     return outputs;
 }
 
@@ -77,6 +80,5 @@ Node* ANN::addNode(Node node) {
 
 ConnectionGene* ANN::addConnectionGene(ConnectionGene connectionGene) {
     this->genome.push_back(connectionGene);
-    determineInputOutput();
     return &this->genome.back();
 }

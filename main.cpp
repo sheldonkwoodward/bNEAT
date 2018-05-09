@@ -20,12 +20,12 @@ int main() {
     auto cg5 = ann.addConnectionGene(ConnectionGene(n2, n4, 1.0));
     auto cg6 = ann.addConnectionGene(ConnectionGene(n3, n5, 1.0));
     auto cg7 = ann.addConnectionGene(ConnectionGene(n4, n5, 1.0));
-//    auto cg8 = ann.addConnectionGene(ConnectionGene(n0, n5, 1));
 
     std::deque<float> inputs = std::deque<float>();
     inputs.push_back(1.0);
     inputs.push_back(1.0);
     inputs.push_back(1.0);
+    ann.setup();
     std::cout << ann.compute(inputs)[0] << std::endl;
 
     return 0;
