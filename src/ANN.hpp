@@ -7,6 +7,7 @@
 
 #include <deque>
 #include <string>
+#include <iostream>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -22,21 +23,23 @@ private:
     std::deque<float*> inputVector;
     std::string species;
 
-    // private functions
-    void determineInputOutput();
-    void determineWeightMatrix();
 public:
     // constructors
-    ANN(std::string species);
+    explicit ANN(std::string species);
 
     // set get
     std::string getSpecies();
 
-    // functions
+    // computation functions
     void setup();
+    void determineInputOutput();
+    void determineWeightMatrix();
     std::deque<float> compute(std::deque<float> inputs);
     Node* addNode(Node node);
     ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
+
+    // general functions
+
  };
 
 

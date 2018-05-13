@@ -5,7 +5,7 @@
 #ifndef NEAT_NEAT_HPP
 #define NEAT_NEAT_HPP
 
-#import <vector>
+#import <deque>
 #import <string>
 
 #import "Snake.hpp"
@@ -13,7 +13,7 @@
 
 class NEAT {
     Snake snake;
-    std::vector<ANN> population;
+    std::deque<ANN> population;
 
 public:
     NEAT(int sizeX, int sizeY);
