@@ -44,8 +44,7 @@ public:
     void addNodeMutation();
     void addConnectionMutation();
     float randomWeight();
-    unsigned long randomNode();
-    unsigned long randomConnectionGene();
+    ConnectionGene* findConnection(Node* from, Node* to);
 };
 
 
