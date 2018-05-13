@@ -9,6 +9,9 @@
 
 
 class Snake {
+    int sizeX;
+    int sizeY;
+
 public:
     Snake(int sizeX, int sizeY);
 

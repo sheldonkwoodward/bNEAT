@@ -8,6 +8,8 @@
 #include <deque>
 #include <string>
 #include <iostream>
+#include <cstdlib>
+#include <limits>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -25,9 +27,10 @@ private:
 
 public:
     // constructors
-    explicit ANN(std::string species);
+    ANN(int inputNum, int outputNum, std::string species);
 
     // set get
+    std::deque<ConnectionGene> getGenome();
     std::string getSpecies();
 
     // computation functions
@@ -35,12 +38,15 @@ public:
     void determineInputOutput();
     void determineWeightMatrix();
     std::deque<float> compute(std::deque<float> inputs);
-    Node* addNode(Node node);
     ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
 
     // general functions
-
- };
+    void addNodeMutation();
+    void addConnectionMutation();
+    float randomWeight();
+    unsigned long randomNode();
+    unsigned long randomConnectionGene();
+};
 
 
 #endif //NEAT_ANN_HPP

@@ -8,17 +8,19 @@
 
 class Node {
     int nodeNum;
+    int layer;
     float value;
 public:
     // constructor
     Node();
-    explicit Node(int nodeNum);
+    Node(int nodeNum, int layer);
 
     // set get
+    int getNodeNum();
+    int getLayer();
     void setValue(float value);
     float getValue();
     float* getValuePtr();
-    int getNodeNum();
 };
 
 

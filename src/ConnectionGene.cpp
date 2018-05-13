@@ -31,3 +31,11 @@ Node *ConnectionGene::getTo() {
 float ConnectionGene::getWeight() {
     return this->weight;
 }
+
+bool ConnectionGene::getEnabled() {
+    return this->enabled;
+}
+
+void ConnectionGene::setEnabled(bool enabled) {
+    this->enabled = enabled;
+}

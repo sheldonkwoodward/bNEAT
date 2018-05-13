@@ -7,11 +7,21 @@
 Node::Node() {
     this->nodeNum = 0;
     this->value = 0;
+    this->layer = 0;
 }
 
-Node::Node(int nodeNum) {
+Node::Node(int nodeNum, int layer) {
     this->nodeNum = nodeNum;
+    this->layer = layer;
     this->value = 0;
+}
+
+int Node::getNodeNum() {
+    return this->nodeNum;
+}
+
+int Node::getLayer() {
+    return this->layer;
 }
 
 void Node::setValue(float value) {
@@ -24,8 +34,4 @@ float Node::getValue() {
 
 float *Node::getValuePtr() {
     return &this->value;
-}
-
-int Node::getNodeNum() {
-    return this->nodeNum;
 }

@@ -7,6 +7,7 @@
 
 #import <deque>
 #import <string>
+#include <cstdlib>
 
 #import "Snake.hpp"
 
@@ -16,7 +17,7 @@ class NEAT {
     std::deque<ANN> population;
 
 public:
-    NEAT(int sizeX, int sizeY);
+    NEAT(int sizeX, int sizeY, unsigned int seed);
 
     void train(float mutationRate, std::string fitness, std::string parentSelection, std::string survivorSelection);
     void populate();

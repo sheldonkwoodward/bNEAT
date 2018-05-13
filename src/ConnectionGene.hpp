@@ -23,6 +23,8 @@ public:
     Node* getFrom();
     Node* getTo();
     float getWeight();
+    bool getEnabled();
+    void setEnabled(bool enabled);
 };
 
 
