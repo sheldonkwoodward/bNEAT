@@ -5,9 +5,10 @@
 #include <iostream>
 #include "ANN.hpp"
 
-ANN::ANN() {
+ANN::ANN(std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
+    this->species = species;
 }
 
 void ANN::determineInputOutput() {

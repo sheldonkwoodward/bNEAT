@@ -3,7 +3,7 @@
 
 
 int main() {
-    ANN ann = ANN();
+    ANN ann = ANN("SPECIES");
 
     auto n0 = ann.addNode(Node(0));
     auto n1 = ann.addNode(Node(1));
