@@ -34,8 +34,6 @@ public:
     std::string getSpecies();
 
     // computation functions
-    void setup();
-    void determineInputOutput();
     void determineWeightMatrix();
     std::deque<float> compute(std::deque<float> inputs);
     ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
@@ -45,6 +43,7 @@ public:
     void addConnectionMutation();
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
+    std::deque<ConnectionGene*> getEnabledGenome();
 };
 
 
