@@ -10,18 +10,28 @@ Node::Node() {
     this->layer = 0;
 }
 
-Node::Node(int nodeNum, int layer) {
+Node::Node(int nodeNum) {
     this->nodeNum = nodeNum;
-    this->layer = layer;
+    this->layer = 0;
     this->value = 0;
+}
+
+bool Node::ptrComparison(Node n1, Node n2) {
+    if (n1.getLayer() <= n2.getLayer()) return false;
+    else if (n1.getLayer() == n2.getLayer() && n1.getNodeNum() < n2.getNodeNum()) return false;
+    return true;
 }
 
 int Node::getNodeNum() {
     return this->nodeNum;
 }
 
-int Node::getLayer() {
+unsigned int Node::getLayer() {
     return this->layer;
+}
+
+void Node::setLayer(unsigned int layer) {
+    this->layer = layer;
 }
 
 void Node::setValue(float value) {

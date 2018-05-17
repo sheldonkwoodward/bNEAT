@@ -8,16 +8,21 @@
 
 class Node {
     int nodeNum;
-    int layer;
+    unsigned int layer;
     float value;
 public:
     // constructor
+    // TODO: remove this constructor
     Node();
-    Node(int nodeNum, int layer);
+    explicit Node(int nodeNum);
+
+    // operator overloads
+    static bool ptrComparison(Node n1, Node n2);
 
     // set get
     int getNodeNum();
-    int getLayer();
+    unsigned int getLayer();
+    void setLayer(unsigned int layer);
     void setValue(float value);
     float getValue();
     float* getValuePtr();

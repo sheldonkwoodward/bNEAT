@@ -7,7 +7,8 @@ int main() {
 //    neat.train(0.01f, "FITNESS", "PSELECTION", "SSELECTION");
     srand(12345);
     ANN ann = ANN(3, 1, "A");
-//    ann.addNodeMutation();
+    ann.addNodeMutation();
+    ann.addNodeMutation();
 //    ann.addConnectionMutation();
 
     for (auto cg : ann.getGenome()) {
@@ -20,6 +21,8 @@ int main() {
     inputs.push_back(1.0f);
     inputs.push_back(1.0f);
     std::deque<float> output = ann.compute(inputs);
+    auto sorted = ann.getSortedNodes();
+    auto genome = ann.getEnabledSortedGenome();
 
     for (auto o : output) {
         std::cout << o << std::endl;

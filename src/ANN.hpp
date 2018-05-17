@@ -35,15 +35,19 @@ public:
 
     // computation functions
     void determineWeightMatrix();
+    void determineLayers();
+    void determineLayers(Node* node, unsigned int layer);
     std::deque<float> compute(std::deque<float> inputs);
     ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
 
+
     // general functions
     void addNodeMutation();
-    void addConnectionMutation();
+//    void addConnectionMutation();
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
-    std::deque<ConnectionGene*> getEnabledGenome();
+    std::deque<ConnectionGene*> getEnabledSortedGenome();
+    std::deque<Node> getSortedNodes();
 };
 
 
