@@ -5,16 +5,31 @@
 #ifndef NEAT_SNAKE_HPP
 #define NEAT_SNAKE_HPP
 
+#import <deque>
 #import "ANN.hpp"
 
 
 class Snake {
+
+    std::deque<std::pair<int, int>> snake;
+    std::pair<int,int> food;
+    int timeOut;
+    int width;
+    int height;
+
+    bool gameOver();
+
+    void generateFood();
+
+    void parseInput(std::deque<float> &input);
+
+    int validMove(std::deque<float> &output) ;
+
 public:
     Snake(int sizeX, int sizeY);
 
-    float fitness(std::string algorithm, bool record);
-    float fitness1(ANN ann);
-    float fitness2(ANN ann);
+    float fitness(ANN agent, bool record);
+
 };
 
 
