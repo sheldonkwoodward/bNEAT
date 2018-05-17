@@ -22,6 +22,7 @@ int main() {
     inputs.push_back(1.0f);
     std::deque<float> output = ann.compute(inputs);
     auto sorted = ann.getSortedNodes();
+    auto sorted2 = ann.getSequentialNodes();
     auto genome = ann.getEnabledSortedGenome();
 
     for (auto o : output) {

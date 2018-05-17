@@ -17,7 +17,8 @@ public:
     explicit Node(int nodeNum);
 
     // operator overloads
-    static bool ptrComparison(Node n1, Node n2);
+    static bool layerSort(Node n1, Node n2);
+    static bool nodeNumSort(Node* n1, Node* n2);
 
     // set get
     int getNodeNum();

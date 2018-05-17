@@ -45,17 +45,14 @@ std::string ANN::getSpecies() {
 // computation functions
 void ANN::determineWeightMatrix() {
     weightMatrix = std::deque<std::deque<float>>();
-    for (int row = 0; row < nodes.size() - inputNodes.size(); row++) {
-        weightMatrix.emplace_back();
-        for (int col = 0; col < nodes.size(); col++) {
-            weightMatrix[row].push_back(0.0);
-        }
+    for (int row = 0; row < nodes.size(); row++) {
+        weightMatrix.emplace_back(nodes.size(), 0.0f);
     }
 
-    // TODO: reorder input vector and weight matrix rows.
-    // values are being calculated before their dependant values are calculated yielding 0 value incrementation
-    for (auto &cg : getEnabledSortedGenome()) {
-        weightMatrix[cg->getTo()->getNodeNum() - inputNodes.size()][cg->getFrom()->getNodeNum()] = cg->getWeight();
+    // build weight matrix
+    auto sortGenome = getEnabledSortedGenome();
+    for (auto &cg : sortGenome) {
+        weightMatrix[cg->getTo()->getNodeNum()][cg->getFrom()->getNodeNum()] = cg->getWeight();
     }
 }
 
@@ -84,7 +81,7 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
 
     // set inputVector
     inputVector = std::deque<float*>();
-    for (auto &node : getSortedNodes()) inputVector.push_back(node.getValuePtr());
+    for (auto &node : getSequentialNodes()) inputVector.push_back(node->getValuePtr());
 
     // feed network
     for (int weightRow = 0; weightRow < weightMatrix.size(); weightRow++) {
@@ -168,6 +165,14 @@ std::deque<ConnectionGene*> ANN::getEnabledSortedGenome() {
 // TODO: sort actual nodes
 std::deque<Node> ANN::getSortedNodes() {
     std::deque<Node> sortedNodes = nodes;
-    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrComparison);
+    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::layerSort);
     return sortedNodes;
 }
+
+std::deque<Node*> ANN::getSequentialNodes() {
+    std::deque<Node*> sortedNodes = std::deque<Node*>();
+    for (auto &node : nodes) sortedNodes.push_back(&node);
+    // TODO: verify sort function
+    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::nodeNumSort);
+    return sortedNodes;
+};
