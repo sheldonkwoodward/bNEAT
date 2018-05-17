@@ -48,6 +48,7 @@ public:
     ConnectionGene* findConnection(Node* from, Node* to);
     std::deque<ConnectionGene*> getEnabledSortedGenome();
     std::deque<Node> getSortedNodes();
+    std::deque<Node> getSortedNodes(bool noInputs);
     std::deque<Node*> getSequentialNodes();
 };
 

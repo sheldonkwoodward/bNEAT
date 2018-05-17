@@ -23,7 +23,7 @@ bool Node::layerSort(Node n1, Node n2) {
 }
 
 bool Node::nodeNumSort(Node* n1, Node* n2) {
-    return n1->getLayer() > n2->getLayer();
+    return n1->getNodeNum() < n2->getNodeNum();
 }
 
 

@@ -9,6 +9,8 @@ int main() {
     ANN ann = ANN(3, 1, "A");
     ann.addNodeMutation();
     ann.addNodeMutation();
+    ann.addNodeMutation();
+    ann.addNodeMutation();
 //    ann.addConnectionMutation();
 
     for (auto cg : ann.getGenome()) {
@@ -21,7 +23,7 @@ int main() {
     inputs.push_back(1.0f);
     inputs.push_back(1.0f);
     std::deque<float> output = ann.compute(inputs);
-    auto sorted = ann.getSortedNodes();
+    auto sorted = ann.getSortedNodes(true);
     auto sorted2 = ann.getSequentialNodes();
     auto genome = ann.getEnabledSortedGenome();
 

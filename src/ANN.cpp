@@ -84,11 +84,12 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     for (auto &node : getSequentialNodes()) inputVector.push_back(node->getValuePtr());
 
     // feed network
-    for (int weightRow = 0; weightRow < weightMatrix.size(); weightRow++) {
-        float* currentInput = inputVector[weightRow + inputNodes.size()];
+    for (auto &node : getSortedNodes(true)) {
+        std::cout << "NODE NUM" << node.getNodeNum() << std::endl;
+        float* currentInput = inputVector[node.getNodeNum()];
         *currentInput = 0.0;
         for (int step = 0; step < nodes.size(); step++) {
-            *currentInput += weightMatrix[weightRow][step] * *inputVector[step];
+            *currentInput += weightMatrix[node.getNodeNum()][step] * *inputVector[step];
         }
         if (*currentInput < 0) *currentInput = *currentInput / 100.0f; // activation function
     }
@@ -169,10 +170,24 @@ std::deque<Node> ANN::getSortedNodes() {
     return sortedNodes;
 }
 
+std::deque<Node> ANN::getSortedNodes(bool noInputs) {
+    if (!noInputs) {
+        return getSortedNodes();
+    } else {
+        auto sortedNodes = std::deque<Node>();
+        for (Node &node : nodes) {
+            if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
+                sortedNodes.push_back(node);
+            }
+        }
+        std::sort(sortedNodes.begin(), sortedNodes.end(), Node::layerSort);
+        return sortedNodes;
+    }
+};
+
 std::deque<Node*> ANN::getSequentialNodes() {
     std::deque<Node*> sortedNodes = std::deque<Node*>();
     for (auto &node : nodes) sortedNodes.push_back(&node);
-    // TODO: verify sort function
     std::sort(sortedNodes.begin(), sortedNodes.end(), Node::nodeNumSort);
     return sortedNodes;
-};
+}
