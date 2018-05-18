@@ -24,6 +24,7 @@ private:
     std::deque<std::deque<float>> weightMatrix;
     std::deque<float*> inputVector;
     std::string species;
+    unsigned int layerCount;
 
 public:
     // constructors
@@ -43,7 +44,7 @@ public:
 
     // general functions
     void addNodeMutation();
-//    void addConnectionMutation();
+    void addConnectionMutation();
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
     std::deque<ConnectionGene*> getEnabledSortedGenome();

@@ -11,6 +11,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->species = std::move(species);
     this->inputNodes = std::deque<Node*>();
     this->outputNodes = std::deque<Node*>();
+    this->layerCount = 1;
 
     // add input and output nodes
     for (int i = 0; i < inputNum; i++) {
@@ -65,12 +66,18 @@ void ANN::determineLayers() {
 void ANN::determineLayers(Node* node, unsigned int layer) {
     if (node->getLayer() <= layer && std::find(outputNodes.begin(), outputNodes.end(), node) == outputNodes.end()) {
         node->setLayer(layer + 1);
+        if (layerCount <= layer + 1) {
+            layerCount = layer + 1;
+        }
     }
     for (auto &cg : genome) {
         if (cg.getTo() == node) {
             cg.setLayer(node->getLayer());
             determineLayers(cg.getFrom(), node->getLayer());
         }
+    }
+    if (std::find(inputNodes.begin(), inputNodes.end(), node) != inputNodes.end()) {
+        node->setLayer(layerCount);
     }
 }
 
@@ -85,7 +92,6 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
 
     // feed network
     for (auto &node : getSortedNodes(true)) {
-        std::cout << "NODE NUM" << node.getNodeNum() << std::endl;
         float* currentInput = inputVector[node.getNodeNum()];
         *currentInput = 0.0;
         for (int step = 0; step < nodes.size(); step++) {
@@ -118,29 +124,30 @@ void ANN::addNodeMutation() {
     determineLayers();
     determineWeightMatrix();
 }
-//
-//void ANN::addConnectionMutation() {
-//    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
-//    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
-//        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
-//            if (nodes[n0].getLayer() < nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
-//                // TODO: implement innovation numbers
-//                // TODO: check if innovation exists
-//                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight());
-//            }
-//        }
-//    }
-//    if (possibleConnections.empty()) {
-//        return;
-//    }
-//    genome.push_back(possibleConnections[rand() % possibleConnections.size()]);
-//    determineLayers();
-//    determineWeightMatrix();
-//}
+
+// TODO: check that good connections are produced
+void ANN::addConnectionMutation() {
+    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
+    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
+        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
+            // TODO: creates connections to inputs :(
+            if (nodes[n0].getLayer() > nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
+                // TODO: check if innovation exists
+                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), true, genome.size());
+            }
+        }
+    }
+    if (possibleConnections.empty()) {
+        return;
+    }
+    genome.push_back(possibleConnections[rand() % possibleConnections.size()]);
+    determineLayers();
+    determineWeightMatrix();
+}
 
 float ANN::randomWeight() {
-//    return (float)(rand() % 1000) / 1000.0f;
-    return 1.0f;
+    return (float)(rand() % 1000) / 1000.0f;
+//    return 1.0f;
 }
 
 ConnectionGene* ANN::findConnection(Node *from, Node *to) {

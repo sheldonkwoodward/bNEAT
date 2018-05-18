@@ -1,34 +1,46 @@
 #include <iostream>
+#include <ctime>
 #include "src/NEAT.hpp"
 
 
 int main() {
-//    NEAT neat = NEAT(10, 10, 12345);
-//    neat.train(0.01f, "FITNESS", "PSELECTION", "SSELECTION");
-    srand(12345);
-    ANN ann = ANN(3, 1, "A");
-    ann.addNodeMutation();
-    ann.addNodeMutation();
-    ann.addNodeMutation();
-    ann.addNodeMutation();
-//    ann.addConnectionMutation();
+    // setup
+    srand(12320839475092);
+    const int INPUT_NUM = 100;
+    const int OUTPUT_NUM = 4;
 
-    for (auto cg : ann.getGenome()) {
-        if (cg.getEnabled())
-            std::cout << cg.getFrom()->getNodeNum() << " -> " << cg.getTo()->getNodeNum() << std::endl;
+    // build ANN
+    ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+    for (int i = 0; i < 100; i++) {
+        ann.addNodeMutation();
+        if (i % 2) {
+            ann.addConnectionMutation();
+        }
     }
 
-    std::deque<float> inputs = std::deque<float>();
-    inputs.push_back(1.0f);
-    inputs.push_back(1.0f);
-    inputs.push_back(1.0f);
-    std::deque<float> output = ann.compute(inputs);
-    auto sorted = ann.getSortedNodes(true);
-    auto sorted2 = ann.getSequentialNodes();
-    auto genome = ann.getEnabledSortedGenome();
+    // print genome
+    for (auto cg : ann.getEnabledSortedGenome()) {
+        if (cg->getEnabled())
+            std::cout << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " " << cg->getLayer() <<
+                                                                                                                  std::endl;
+    }
 
-    for (auto o : output) {
-        std::cout << o << std::endl;
+    // add inputs
+    std::deque<float> inputs = std::deque<float>();
+    for (int i = 0; i < INPUT_NUM; i++) {
+        inputs.push_back(1.0f);
+    }
+
+    // compute
+    std::deque<float> output = ann.compute(inputs);
+
+    // print output
+    while (true) {
+        output = ann.compute(inputs);
+        std::cout << "OUTPUT" << std::endl;
+        for (auto o : output) {
+            std::cout << o << std::endl;
+        }
     }
 
     return 0;
