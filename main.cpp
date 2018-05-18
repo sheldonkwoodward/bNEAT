@@ -11,7 +11,7 @@ int main() {
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
     for (int i = 0; i < 100; i++) {
-        ann.addNodeMutation();
+        if (!(i % 2)) ann.addNodeMutation();
         ann.addConnectionMutation();
     }
 

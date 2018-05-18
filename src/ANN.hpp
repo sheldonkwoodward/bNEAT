@@ -39,12 +39,12 @@ public:
     void determineLayers();
     void determineLayers(Node* node, unsigned int layer);
     std::deque<float> compute(std::deque<float> inputs);
-    ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
 
-
-    // general functions
+    // mutation functions
     void addNodeMutation();
     void addConnectionMutation();
+
+    // general functions
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
     std::deque<ConnectionGene*> getEnabledSortedGenome();

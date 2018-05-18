@@ -83,7 +83,7 @@ void ANN::determineLayers(Node* node, unsigned int layer) {
 
 std::deque<float> ANN::compute(std::deque<float> inputs) {
     // set inputs
-    if (inputs.size() != inputNodes.size()) return std::deque<float>();
+    if (inputs.size() != inputNodes.size()) return std::deque<float>(4, 0.0f);
     for (int i = 0; i < inputs.size(); i++) inputNodes[i]->setValue(inputs[i]);
 
     // set inputVector
@@ -94,21 +94,20 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     for (auto &node : getSortedNodes(true)) {
         float* currentInput = inputVector[node.getNodeNum()];
         *currentInput = 0.0;
+        // TODO: could potentially be optimized, iterates over all nodes
         for (int step = 0; step < nodes.size(); step++) {
             *currentInput += weightMatrix[node.getNodeNum()][step] * *inputVector[step];
         }
-        if (*currentInput < 0) *currentInput = *currentInput / 100.0f; // activation function
+
+        // activation function
+        if (*currentInput < 0.0f) *currentInput = *currentInput / 100.0f;
+
     }
 
     // gather outputs
     std::deque<float> outputs = std::deque<float>();
-    for (auto &node : outputNodes) outputs.push_back(node->getValue());
+    for (auto &node : outputNodes) outputs.push_back(std::max(node->getValue(), 0.0f)); // output activation
     return outputs;
-}
-
-ConnectionGene* ANN::addConnectionGene(ConnectionGene connectionGene) {
-    genome.push_back(connectionGene);
-    return &genome.back();
 }
 
 // general functions
