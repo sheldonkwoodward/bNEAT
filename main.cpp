@@ -1,32 +1,47 @@
 #include <iostream>
-#include "src/ANN.hpp"
+#include <ctime>
+#include "src/NEAT.hpp"
 
 
 int main() {
-    ANN ann = ANN("SPECIES");
+    // setup
+    srand(12320839475092);
+    const int INPUT_NUM = 100;
+    const int OUTPUT_NUM = 4;
 
-    auto n0 = ann.addNode(Node(0));
-    auto n1 = ann.addNode(Node(1));
-    auto n2 = ann.addNode(Node(2));
-    auto n3 = ann.addNode(Node(3));
-    auto n4 = ann.addNode(Node(4));
-    auto n5 = ann.addNode(Node(5));
+    // build ANN
+    ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+    for (int i = 0; i < 100; i++) {
+        ann.addNodeMutation();
+        if (i % 2) {
+            ann.addConnectionMutation();
+        }
+    }
 
-    auto cg0 = ann.addConnectionGene(ConnectionGene(n0, n3, 1.0));
-    auto cg1 = ann.addConnectionGene(ConnectionGene(n1, n3, 1.0));
-    auto cg2 = ann.addConnectionGene(ConnectionGene(n2, n3, 1.0));
-    auto cg3 = ann.addConnectionGene(ConnectionGene(n0, n4, 1.0));
-    auto cg4 = ann.addConnectionGene(ConnectionGene(n1, n4, 1.0));
-    auto cg5 = ann.addConnectionGene(ConnectionGene(n2, n4, 1.0));
-    auto cg6 = ann.addConnectionGene(ConnectionGene(n3, n5, 1.0));
-    auto cg7 = ann.addConnectionGene(ConnectionGene(n4, n5, 1.0));
+    // print genome
+    for (auto cg : ann.getEnabledSortedGenome()) {
+        if (cg->getEnabled())
+            std::cout << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " " << cg->getLayer() <<
+                                                                                                                  std::endl;
+    }
 
+    // add inputs
     std::deque<float> inputs = std::deque<float>();
-    inputs.push_back(1.0);
-    inputs.push_back(1.0);
-    inputs.push_back(1.0);
-    ann.setup();
-    std::cout << ann.compute(inputs)[0] << std::endl;
+    for (int i = 0; i < INPUT_NUM; i++) {
+        inputs.push_back(1.0f);
+    }
+
+    // compute
+    std::deque<float> output = ann.compute(inputs);
+
+    // print output
+    while (true) {
+        output = ann.compute(inputs);
+        std::cout << "OUTPUT" << std::endl;
+        for (auto o : output) {
+            std::cout << o << std::endl;
+        }
+    }
 
     return 0;
 }

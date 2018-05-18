@@ -5,18 +5,19 @@
 #ifndef NEAT_NEAT_HPP
 #define NEAT_NEAT_HPP
 
-#import <vector>
+#import <deque>
 #import <string>
+#include <cstdlib>
 
 #import "Snake.hpp"
 
 
 class NEAT {
     Snake snake;
-    std::vector<ANN> population;
+    std::deque<ANN> population;
 
 public:
-    NEAT(int sizeX, int sizeY);
+    NEAT(int sizeX, int sizeY, unsigned int seed);
 
     void train(float mutationRate, std::string fitness, std::string parentSelection, std::string survivorSelection);
     void populate();

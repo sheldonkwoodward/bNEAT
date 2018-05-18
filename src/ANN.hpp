@@ -7,6 +7,9 @@
 
 #include <deque>
 #include <string>
+#include <iostream>
+#include <cstdlib>
+#include <limits>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -21,23 +24,34 @@ private:
     std::deque<std::deque<float>> weightMatrix;
     std::deque<float*> inputVector;
     std::string species;
+    unsigned int layerCount;
 
-    // private functions
-    void determineInputOutput();
-    void determineWeightMatrix();
 public:
     // constructors
-    ANN(std::string species);
+    ANN(int inputNum, int outputNum, std::string species);
 
     // set get
+    std::deque<ConnectionGene> getGenome();
     std::string getSpecies();
 
-    // functions
-    void setup();
+    // computation functions
+    void determineWeightMatrix();
+    void determineLayers();
+    void determineLayers(Node* node, unsigned int layer);
     std::deque<float> compute(std::deque<float> inputs);
-    Node* addNode(Node node);
     ConnectionGene* addConnectionGene(ConnectionGene connectionGene);
- };
+
+
+    // general functions
+    void addNodeMutation();
+    void addConnectionMutation();
+    float randomWeight();
+    ConnectionGene* findConnection(Node* from, Node* to);
+    std::deque<ConnectionGene*> getEnabledSortedGenome();
+    std::deque<Node> getSortedNodes();
+    std::deque<Node> getSortedNodes(bool noInputs);
+    std::deque<Node*> getSequentialNodes();
+};
 
 
 #endif //NEAT_ANN_HPP
