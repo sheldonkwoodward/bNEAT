@@ -1,11 +1,10 @@
 #include <iostream>
-#include <ctime>
 #include "src/NEAT.hpp"
 
 
 int main() {
     // setup
-    srand(12320839475092);
+    srand(1);
     const int INPUT_NUM = 100;
     const int OUTPUT_NUM = 4;
 
@@ -13,9 +12,7 @@ int main() {
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
     for (int i = 0; i < 100; i++) {
         ann.addNodeMutation();
-        if (i % 2) {
-            ann.addConnectionMutation();
-        }
+        ann.addConnectionMutation();
     }
 
     // print genome

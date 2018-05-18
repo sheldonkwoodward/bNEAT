@@ -130,7 +130,6 @@ void ANN::addConnectionMutation() {
     std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
     for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
         for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
-            // TODO: creates connections to inputs :(
             if (nodes[n0].getLayer() > nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
                 // TODO: check if innovation exists
                 possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), true, genome.size());
