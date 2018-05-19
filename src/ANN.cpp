@@ -207,28 +207,6 @@ void ANN::sortNodes() {
     std::sort(nonInputSortedNodes.begin(), nonInputSortedNodes.end(), Node::ptrLayerSort);
 }
 
-std::deque<Node*> ANN::getSortedNodes() {
-    std::deque<Node*> sortedNodes = std::deque<Node*>();
-    for (auto &node : nodes) sortedNodes.push_back(&node);
-    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrLayerSort);
-    return sortedNodes;
-}
-
-std::deque<Node*> ANN::getSortedNodes(bool noInputs) {
-    if (!noInputs) {
-        return getSortedNodes();
-    } else {
-        std::deque<Node*> sortedNodes = std::deque<Node*>();
-        for (Node &node : nodes) {
-            if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
-                sortedNodes.push_back(&node);
-            }
-        }
-        std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrLayerSort);
-        return sortedNodes;
-    }
-};
-
 std::deque<Node*> ANN::getSequentialNodes() {
     std::deque<Node*> sortedNodes = std::deque<Node*>();
     for (auto &node : nodes) sortedNodes.push_back(&node);
