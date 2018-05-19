@@ -16,13 +16,6 @@ int main() {
         ann.addConnectionMutation();
     }
 
-    // print genome
-    for (auto cg : ann.getEnabledSortedGenome()) {
-        if (cg->getEnabled())
-            std::cout << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " " << cg->getLayer() <<
-                                                                                                                  std::endl;
-    }
-
     // add inputs
     std::deque<float> inputs = std::deque<float>();
     for (int i = 0; i < INPUT_NUM; i++) {
@@ -36,10 +29,10 @@ int main() {
     int start_s=clock();
     for (int i = 0; i < 1000; i++) {
         output = ann.compute(inputs);
-//        std::cout << "OUTPUT " << i << std::endl;
-//        for (auto o : output) {
-//            std::cout << o << std::endl;
-//        }
+        std::cout << "OUTPUT " << i << std::endl;
+        for (auto o : output) {
+            std::cout << o << std::endl;
+        }
     }
     int stop_s=clock();
     std::cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)*1000 << std::endl;

@@ -24,8 +24,9 @@ private:
     // pointer structures
     std::deque<Node*> inputNodes;
     std::deque<Node*> outputNodes;
-    std::deque<Node*> sortedNodes;
-    std::deque<Node*> nonInputSortedNodes;
+    std::deque<Node*> layerSortedNodes;
+    std::deque<Node*> nonInputLayerSortedNodes;
+    std::deque<ConnectionGene*> enabledSortedGenome;
 
     // computation structures
     std::deque<std::deque<float>> weightMatrix;
@@ -56,8 +57,9 @@ public:
     // general functions
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
-    std::deque<ConnectionGene*> getEnabledSortedGenome();
+//    std::deque<ConnectionGene*> getEnabledSortedGenome();
     void sortNodes();
+    void sortGenome();
     std::deque<Node*> getSequentialNodes();
 };
 
