@@ -26,6 +26,7 @@ private:
     std::deque<Node*> outputNodes;
     std::deque<Node*> layerSortedNodes;
     std::deque<Node*> nonInputLayerSortedNodes;
+    std::deque<Node*> sequentialNodes;
     std::deque<ConnectionGene*> enabledSortedGenome;
 
     // computation structures
@@ -57,10 +58,8 @@ public:
     // general functions
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
-//    std::deque<ConnectionGene*> getEnabledSortedGenome();
     void sortNodes();
     void sortGenome();
-    std::deque<Node*> getSequentialNodes();
 };
 
 
