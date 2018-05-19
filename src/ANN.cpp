@@ -8,16 +8,26 @@
 ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
-    this->species = std::move(species);
+
     this->inputNodes = std::deque<Node*>();
+
     this->outputNodes = std::deque<Node*>();
+    this->sortedNodes = std::deque<Node*>();
+    this->nonInputSortedNodes = std::deque<Node*>();
+
+    this->weightMatrix = std::deque<std::deque<float>>();
+    this->inputVector = std::deque<float*>();
+
+    this->species = std::move(species);
     this->layerCount = 1;
 
-    // add input and output nodes
+    // add inputs
     for (int i = 0; i < inputNum; i++) {
         nodes.emplace_back((int)nodes.size());
         inputNodes.push_back(&nodes.back());
     }
+
+    // add outputs
     for (int o = 0; o < outputNum; o++) {
         nodes.emplace_back((int)nodes.size());
         outputNodes.push_back(&nodes.back());
@@ -30,6 +40,8 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
         }
     }
 
+    // calculate layer values
+    sortNodes();
     determineLayers();
     determineWeightMatrix();
 }
@@ -90,13 +102,25 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     inputVector = std::deque<float*>();
     for (auto &node : getSequentialNodes()) inputVector.push_back(node->getValuePtr());
 
+//    std::cout << "nonInputSortedNodes" << std::endl;
+//    for (auto &node : nonInputSortedNodes) {
+//        std::cout << node->getNodeNum() << std::endl;
+//    }
+//    std::cout << "getSortedNodes" << std::endl;
+//    for (auto &node : getSortedNodes(true)) {
+//        std::cout << node->getNodeNum() << std::endl;
+//    }
+//
+//    int x;
+//    std::cin >> x;
+
     // feed network
-    for (auto &node : getSortedNodes(true)) {
-        float* currentInput = inputVector[node.getNodeNum()];
+    for (auto &node : nonInputSortedNodes) {
+        float* currentInput = inputVector[node->getNodeNum()];
         *currentInput = 0.0;
         // TODO: could potentially be optimized, iterates over all nodes
         for (int step = 0; step < nodes.size(); step++) {
-            *currentInput += weightMatrix[node.getNodeNum()][step] * *inputVector[step];
+            *currentInput += weightMatrix[node->getNodeNum()][step] * *inputVector[step];
         }
 
         // activation function
@@ -120,6 +144,7 @@ void ANN::addNodeMutation() {
     genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), true, genome.size());
     genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), true, genome.size());
     randomConnection->setEnabled(false);
+    sortNodes();
     determineLayers();
     determineWeightMatrix();
 }
@@ -139,6 +164,7 @@ void ANN::addConnectionMutation() {
         return;
     }
     genome.push_back(possibleConnections[rand() % possibleConnections.size()]);
+    sortNodes();
     determineLayers();
     determineWeightMatrix();
 }
@@ -168,24 +194,37 @@ std::deque<ConnectionGene*> ANN::getEnabledSortedGenome() {
     return enabledConnections;
 }
 
-// TODO: sort actual nodes
-std::deque<Node> ANN::getSortedNodes() {
-    std::deque<Node> sortedNodes = nodes;
-    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::layerSort);
+void ANN::sortNodes() {
+    sortedNodes = std::deque<Node*>();
+    nonInputSortedNodes = std::deque<Node*>();
+    for (Node &node : nodes) {
+        sortedNodes.push_back(&node);
+        if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
+            nonInputSortedNodes.push_back(&node);
+        }
+    }
+    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrLayerSort);
+    std::sort(nonInputSortedNodes.begin(), nonInputSortedNodes.end(), Node::ptrLayerSort);
+}
+
+std::deque<Node*> ANN::getSortedNodes() {
+    std::deque<Node*> sortedNodes = std::deque<Node*>();
+    for (auto &node : nodes) sortedNodes.push_back(&node);
+    std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrLayerSort);
     return sortedNodes;
 }
 
-std::deque<Node> ANN::getSortedNodes(bool noInputs) {
+std::deque<Node*> ANN::getSortedNodes(bool noInputs) {
     if (!noInputs) {
         return getSortedNodes();
     } else {
-        auto sortedNodes = std::deque<Node>();
+        std::deque<Node*> sortedNodes = std::deque<Node*>();
         for (Node &node : nodes) {
             if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
-                sortedNodes.push_back(node);
+                sortedNodes.push_back(&node);
             }
         }
-        std::sort(sortedNodes.begin(), sortedNodes.end(), Node::layerSort);
+        std::sort(sortedNodes.begin(), sortedNodes.end(), Node::ptrLayerSort);
         return sortedNodes;
     }
 };

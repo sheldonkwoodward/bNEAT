@@ -17,12 +17,21 @@
 
 class ANN {
 private:
+    // topology
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
+
+    // pointer structures
     std::deque<Node*> inputNodes;
     std::deque<Node*> outputNodes;
+    std::deque<Node*> sortedNodes;
+    std::deque<Node*> nonInputSortedNodes;
+
+    // computation structures
     std::deque<std::deque<float>> weightMatrix;
     std::deque<float*> inputVector;
+
+    // other attributes
     std::string species;
     unsigned int layerCount;
 
@@ -48,8 +57,9 @@ public:
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
     std::deque<ConnectionGene*> getEnabledSortedGenome();
-    std::deque<Node> getSortedNodes();
-    std::deque<Node> getSortedNodes(bool noInputs);
+    void sortNodes();
+    std::deque<Node*> getSortedNodes();
+    std::deque<Node*> getSortedNodes(bool noInputs);
     std::deque<Node*> getSequentialNodes();
 };
 

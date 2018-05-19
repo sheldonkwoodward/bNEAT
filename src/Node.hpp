@@ -18,6 +18,7 @@ public:
 
     // operator overloads
     static bool layerSort(Node n1, Node n2);
+    static bool ptrLayerSort(Node* n1, Node* n2);
     static bool nodeNumSort(Node* n1, Node* n2);
 
     // set get
