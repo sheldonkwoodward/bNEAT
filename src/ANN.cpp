@@ -37,7 +37,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     // add input to output connections
     for (auto in : inputNodes) {
         for (auto on : outputNodes) {
-            genome.emplace_back(in, on, randomWeight(), true);
+            genome.emplace_back(in, on, randomWeight(), genome.size());
         }
     }
 
@@ -127,31 +127,25 @@ void ANN::determineWeightMatrix() {
 // mutations
 void ANN::addNodeMutation() {
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
-    // TODO: could create duplicate layers
     nodes.emplace_back((int)nodes.size());
-    // TODO: check if innovation exists
-    // TODO: implement proper weight mutation
-    genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), true);
-    genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), true);
+    genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight());
+    genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight());
     randomConnection->setEnabled(false);
     setup();
 }
 
 void ANN::addConnectionMutation() {
-    // TODO: check that good connections are produced
     std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
     for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
         for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
             if (nodes[n0].getLayer() > nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
-                // TODO: check if innovation exists
-                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), true);
+                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
             }
         }
     }
-    if (possibleConnections.empty()) {
-        return;
-    }
-    genome.push_back(possibleConnections[rand() % possibleConnections.size()]);
+    if (possibleConnections.empty()) return;
+    auto connection = possibleConnections[rand() % possibleConnections.size()];
+    genome.emplace_back(connection.getFrom(), connection.getTo(), connection.getWeight());
     setup();
 }
 

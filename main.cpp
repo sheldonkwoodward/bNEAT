@@ -6,12 +6,12 @@
 int main() {
     // setup
     srand(1);
-    const int INPUT_NUM = 100;
-    const int OUTPUT_NUM = 4;
+    const int INPUT_NUM = 3;
+    const int OUTPUT_NUM = 1;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 5; i++) {
         if (!(i % 2)) ann.addNodeMutation();
         ann.addConnectionMutation();
     }
@@ -19,7 +19,8 @@ int main() {
     // output genome
     for (auto &gene : ann.getGenome()) {
         if (gene.getEnabled()) {
-            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << std::endl;
+            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << " " << gene.getLayer() <<
+                                                                                                            std::endl;
         }
      }
 
@@ -34,7 +35,7 @@ int main() {
 
     // print output
     int start_s=clock();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 10; i++) {
         output = ann.compute(inputs);
         std::cout << "OUTPUT " << i << std::endl;
         for (auto o : output) {

@@ -19,7 +19,8 @@ class ConnectionGene {
 
 public:
     // constructor
-    ConnectionGene(Node* from, Node* to, float weight, bool enabled);
+    ConnectionGene(Node* from, Node* to, float weight);
+    ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation);
 
     // sort
     static bool layerSort(ConnectionGene *cg1, ConnectionGene *cg2);
