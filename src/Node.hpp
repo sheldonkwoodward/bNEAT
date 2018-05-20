@@ -14,7 +14,7 @@ public:
     // constructor
     explicit Node(int nodeNum);
 
-    // sort functions
+    // sort
     static bool layerSort(Node *n1, Node *n2);
     static bool sequentialSort(Node *n1, Node *n2);
 

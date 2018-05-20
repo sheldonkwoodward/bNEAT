@@ -44,7 +44,7 @@ public:
     std::deque<ConnectionGene> getGenome();
     std::string getSpecies();
 
-    // setup functions
+    // setup
     void setup();
     void sortNodes();
     void sortGenome();

@@ -10,7 +10,6 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->genome = std::deque<ConnectionGene>();
 
     this->inputNodes = std::deque<Node*>();
-
     this->outputNodes = std::deque<Node*>();
     this->layerSortedNodes = std::deque<Node*>();
     this->nonInputLayerSortedNodes = std::deque<Node*>();
@@ -38,7 +37,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     // add input to output connections
     for (auto in : inputNodes) {
         for (auto on : outputNodes) {
-            genome.emplace_back(in, on, randomWeight(), true, genome.size());
+            genome.emplace_back(in, on, randomWeight(), true);
         }
     }
 
@@ -85,7 +84,7 @@ void ANN::sortGenome() {
             enabledSortedGenome.push_back(&genome.at(cg));
         }
     }
-    std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::ptrComparison);
+    std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::layerSort);
 }
 
 void ANN::determineLayers() {
@@ -132,8 +131,8 @@ void ANN::addNodeMutation() {
     nodes.emplace_back((int)nodes.size());
     // TODO: check if innovation exists
     // TODO: implement proper weight mutation
-    genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), true, genome.size());
-    genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), true, genome.size());
+    genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), true);
+    genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), true);
     randomConnection->setEnabled(false);
     setup();
 }
@@ -145,7 +144,7 @@ void ANN::addConnectionMutation() {
         for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
             if (nodes[n0].getLayer() > nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
                 // TODO: check if innovation exists
-                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), true, genome.size());
+                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), true);
             }
         }
     }
