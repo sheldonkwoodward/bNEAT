@@ -73,9 +73,9 @@ void ANN::sortNodes() {
             nonInputLayerSortedNodes.push_back(&node);
         }
     }
-    std::sort(layerSortedNodes.begin(), layerSortedNodes.end(), Node::ptrLayerSort);
-    std::sort(nonInputLayerSortedNodes.begin(), nonInputLayerSortedNodes.end(), Node::ptrLayerSort);
-    std::sort(sequentialSortedNodes.begin(), sequentialSortedNodes.end(), Node::nodeNumSort);
+    std::sort(layerSortedNodes.begin(), layerSortedNodes.end(), Node::layerSort);
+    std::sort(nonInputLayerSortedNodes.begin(), nonInputLayerSortedNodes.end(), Node::layerSort);
+    std::sort(sequentialSortedNodes.begin(), sequentialSortedNodes.end(), Node::sequentialSort);
 }
 
 void ANN::sortGenome() {
@@ -127,11 +127,11 @@ void ANN::determineWeightMatrix() {
 
 // mutations
 void ANN::addNodeMutation() {
-//    std::deque<ConnectionGene*> enabledConnections = getEnabledSortedGenome();
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
     // TODO: could create duplicate layers
     nodes.emplace_back((int)nodes.size());
     // TODO: check if innovation exists
+    // TODO: implement proper weight mutation
     genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), true, genome.size());
     genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), true, genome.size());
     randomConnection->setEnabled(false);

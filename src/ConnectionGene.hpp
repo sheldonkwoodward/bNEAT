@@ -17,7 +17,6 @@ class ConnectionGene {
     unsigned int layer;
 public:
     // constructor
-//    ConnectionGene(Node* from, Node* to, float weight);
     ConnectionGene(Node* from, Node* to, float weight, bool enabled, int innovation);
 
     static bool ptrComparison(ConnectionGene* cg1, ConnectionGene* cg2);

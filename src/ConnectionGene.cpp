@@ -18,7 +18,7 @@ ConnectionGene::ConnectionGene(Node* from, Node* to, float weight, bool enabled,
     this->weight = weight;
     this->enabled = enabled;
     this->innovation = innovation;
-    this->layer;
+    this->layer = 0;
 }
 
 bool ConnectionGene::ptrComparison(ConnectionGene *cg1, ConnectionGene *cg2) {

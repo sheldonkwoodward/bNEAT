@@ -16,6 +16,13 @@ int main() {
         ann.addConnectionMutation();
     }
 
+    // output genome
+    for (auto &gene : ann.getGenome()) {
+        if (gene.getEnabled()) {
+            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << std::endl;
+        }
+     }
+
     // add inputs
     std::deque<float> inputs = std::deque<float>();
     for (int i = 0; i < INPUT_NUM; i++) {
