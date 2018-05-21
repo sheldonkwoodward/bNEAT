@@ -22,25 +22,15 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->species = std::move(species);
     this->layerCount = 1;
 
-    // add inputs
+    // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
         nodes.emplace_back((int)nodes.size());
         inputNodes.push_back(&nodes.back());
     }
-
-    // add outputs
     for (int o = 0; o < outputNum; o++) {
         nodes.emplace_back((int)nodes.size());
         outputNodes.push_back(&nodes.back());
     }
-
-    // add input to output connections
-    for (auto in : inputNodes) {
-        for (auto on : outputNodes) {
-            genome.emplace_back(in, on, randomWeight(), genome.size());
-        }
-    }
-
     setup();
 }
 
@@ -166,6 +156,7 @@ void ANN::weightMutation() {
 }
 
 void ANN::addNodeMutation() {
+    if (genome.empty()) return;
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
     nodes.emplace_back((int)nodes.size());
     genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight());

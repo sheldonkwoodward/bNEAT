@@ -5,13 +5,13 @@
 
 int main() {
     // setup
-    srand(123);
+    srand(1234);
     const int INPUT_NUM = 3;
     const int OUTPUT_NUM = 1;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 5; i++) {
         if (!(i % 2)) ann.addNodeMutation();
         ann.addConnectionMutation();
         ann.weightMutation();
@@ -46,6 +46,22 @@ int main() {
     }
     int stop_s=clock();
     std::cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)*1000 << std::endl;
+
+
+//    srand(1);
+//    const int INPUT_NUM = 3;
+//    const int OUTPUT_NUM = 1;
+//
+//    ANN ann1 = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+//    ANN ann2 = ANN(INPUT_NUM, OUTPUT_NUM, "B");
+//    for (int i = 0; i < 5; i++) {
+//        if (!(i % 2)) {
+//            ann1.addNodeMutation();
+//            ann2.addNodeMutation();
+//        }
+//        ann1.addConnectionMutation();
+//        ann2.addConnectionMutation();
+//    }
 
     return 0;
 }
