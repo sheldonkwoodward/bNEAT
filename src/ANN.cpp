@@ -151,9 +151,10 @@ void ANN::addConnectionMutation() {
 
 // computation
 std::deque<float> ANN::compute(std::deque<float> inputs) {
-    // set inputs
+    // set inputs and outputs
     if (inputs.size() != inputNodes.size()) return std::deque<float>(outputNodes.size(), 0.0f);
     for (int i = 0; i < inputs.size(); i++) inputNodes[i]->setValue(inputs[i]);
+    std::deque<float> outputs = std::deque<float>();
 
     // set inputVector
     inputVector = std::deque<float*>();
@@ -166,15 +167,26 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
         for (int n = 0; n < nodes.size(); n++) {
             *currentInput += weightMatrix[node->getNodeNum()][n] * *inputVector[n];
         }
-
-        // activation function
-        if (*currentInput < 0.0f) *currentInput = *currentInput / 100.0f;
+        if (node->getLayer() != 0) hiddenActivation(*currentInput);
+        else {
+            outputActivation(*node->getValuePtr());
+            outputs.push_back(node->getValue());
+        }
     }
 
     // gather outputs
-    std::deque<float> outputs = std::deque<float>();
-    for (auto &node : outputNodes) outputs.push_back(std::max(node->getValue(), 0.0f)); // output activation
+    for (auto &node : outputNodes) outputs.push_back(node->getValue());
     return outputs;
+}
+
+// activation
+void ANN::hiddenActivation(float &value) {
+    // leaky ReLU activation
+    if (value < 0.0f) value = value / 100.0f;
+}
+
+void ANN::outputActivation(float &value) {
+    // identity activation
 }
 
 // general

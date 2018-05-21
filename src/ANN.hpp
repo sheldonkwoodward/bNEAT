@@ -59,6 +59,10 @@ public:
     // computation
     std::deque<float> compute(std::deque<float> inputs);
 
+    // activation
+    void hiddenActivation(float &value);
+    void outputActivation(float &value);
+
     // general
     float randomWeight();
     ConnectionGene* findConnection(Node* from, Node* to);
