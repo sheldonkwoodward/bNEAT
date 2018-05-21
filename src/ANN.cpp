@@ -62,9 +62,9 @@ void ANN::setup() {
 }
 
 void ANN::sortNodes() {
-    layerSortedNodes = std::deque<Node*>();
-    nonInputLayerSortedNodes = std::deque<Node*>();
-    sequentialSortedNodes = std::deque<Node*>();
+    layerSortedNodes.clear();
+    nonInputLayerSortedNodes.clear();
+    sequentialSortedNodes.clear();
     for (auto &node : nodes) {
         layerSortedNodes.push_back(&node);
         sequentialSortedNodes.push_back(&node);
@@ -78,7 +78,7 @@ void ANN::sortNodes() {
 }
 
 void ANN::sortGenome() {
-    enabledSortedGenome = std::deque<ConnectionGene*>();
+    enabledSortedGenome.clear();
     for (unsigned long cg = 0; cg < genome.size(); cg++) {
         if (genome[cg].getEnabled()) {
             enabledSortedGenome.push_back(&genome.at(cg));
@@ -112,7 +112,7 @@ void ANN::determineLayers(Node* node, unsigned int layer) {
 }
 
 void ANN::determineWeightMatrix() {
-    weightMatrix = std::deque<std::deque<float>>();
+    weightMatrix.clear();
     for (int row = 0; row < nodes.size(); row++) {
         weightMatrix.emplace_back(nodes.size(), 0.0f);
     }
@@ -197,7 +197,7 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     std::deque<float> outputs = std::deque<float>();
 
     // set inputVector
-    inputVector = std::deque<float*>();
+    inputVector.clear();
     for (auto &node : sequentialSortedNodes) inputVector.push_back(node->getValuePtr());
 
     // feed network
@@ -215,6 +215,7 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
     }
 
     // gather outputs
+    outputs.clear();
     for (auto &node : outputNodes) outputs.push_back(node->getValue());
     return outputs;
 }

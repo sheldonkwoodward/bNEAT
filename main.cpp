@@ -6,8 +6,8 @@
 int main() {
     // setup
     srand(1);
-    const int INPUT_NUM = 3;
-    const int OUTPUT_NUM = 1;
+    const int INPUT_NUM = 100;
+    const int OUTPUT_NUM = 4;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
