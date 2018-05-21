@@ -79,9 +79,9 @@ void ANN::sortNodes() {
 
 void ANN::sortGenome() {
     enabledSortedGenome.clear();
-    for (unsigned long cg = 0; cg < genome.size(); cg++) {
-        if (genome[cg].getEnabled()) {
-            enabledSortedGenome.push_back(&genome.at(cg));
+    for (auto &cg : genome) {
+        if (cg.getEnabled()) {
+            enabledSortedGenome.push_back(&cg);
         }
     }
     std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::layerSort);
@@ -118,7 +118,6 @@ void ANN::determineWeightMatrix() {
     }
 
     // build weight matrix
-//    auto sortGenome = getEnabledSortedGenome();
     for (auto &cg : enabledSortedGenome) {
         weightMatrix[cg->getTo()->getNodeNum()][cg->getFrom()->getNodeNum()] = cg->getWeight();
     }
@@ -163,6 +162,7 @@ void ANN::weightMutation() {
             break;
         }
     }
+    setup();
 }
 
 void ANN::addNodeMutation() {
