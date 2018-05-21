@@ -53,6 +53,7 @@ public:
     void determineWeightMatrix();
 
     // mutations
+    void weightMutation();
     void addNodeMutation();
     void addConnectionMutation();
 

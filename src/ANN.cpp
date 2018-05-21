@@ -125,6 +125,16 @@ void ANN::determineWeightMatrix() {
 }
 
 // mutations
+void ANN::weightMutation() {
+    // change to randomly chosen weight
+    // change weight by 0.5% to 1.5%
+    // add or subtract between 0 and 1 to weight
+    // change sign of weight
+    // swap to weights in a single topology
+
+    ConnectionGene* randomConnection = &genome.at(rand() % genome.size());
+}
+
 void ANN::addNodeMutation() {
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
     nodes.emplace_back((int)nodes.size());
@@ -165,7 +175,7 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
         float* currentInput = inputVector[node->getNodeNum()];
         *currentInput = 0.0;
         for (int n = 0; n < nodes.size(); n++) {
-            *currentInput += weightMatrix[node->getNodeNum()][n] * *inputVector[n];
+            *currentInput += weightMatrix[node->getNodeNum()][n] **inputVector[n];
         }
         if (node->getLayer() != 0) hiddenActivation(*currentInput);
         else {
@@ -194,7 +204,7 @@ float ANN::randomWeight() {
     return (float)(rand() % 1000) / 1000.0f;
 }
 
-ConnectionGene* ANN::findConnection(Node *from, Node *to) {
+ConnectionGene* ANN::findConnection(Node* from, Node* to) {
     for (unsigned long cg = 0; cg < genome.size(); cg++) {
         if (genome[cg].getFrom() == from && genome[cg].getTo() == to) return &genome.at(cg);
     }
