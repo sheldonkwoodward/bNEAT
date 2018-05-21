@@ -54,8 +54,8 @@ public:
 
     // mutations
     void weightMutation();
-    void addNodeMutation();
-    void addConnectionMutation();
+    void nodeMutation();
+    void connectionMutation();
 
     // computation
     std::deque<float> compute(std::deque<float> inputs);
@@ -64,9 +64,9 @@ public:
     void hiddenActivation(float &value);
     void outputActivation(float &value);
 
-    // general
+    // other
     float randomWeight();
-    ConnectionGene* findConnection(Node* from, Node* to);
+    bool connectionExists(Node* from, Node* to);
 };
 
 

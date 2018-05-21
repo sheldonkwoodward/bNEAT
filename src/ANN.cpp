@@ -155,7 +155,7 @@ void ANN::weightMutation() {
     setup();
 }
 
-void ANN::addNodeMutation() {
+void ANN::nodeMutation() {
     if (genome.empty()) return;
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
     nodes.emplace_back((int)nodes.size());
@@ -165,11 +165,11 @@ void ANN::addNodeMutation() {
     setup();
 }
 
-void ANN::addConnectionMutation() {
+void ANN::connectionMutation() {
     std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
     for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
         for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
-            if (nodes[n0].getLayer() > nodes[n1].getLayer() && findConnection(&nodes.at(n0), &nodes.at(n1)) == nullptr) {
+            if (nodes[n0].getLayer() > nodes[n1].getLayer() && !connectionExists(&nodes.at(n0), &nodes.at(n1))) {
                 possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
             }
         }
@@ -221,14 +221,13 @@ void ANN::outputActivation(float &value) {
     // identity activation
 }
 
-// general
+// other
 float ANN::randomWeight() {
     return (float)(rand() % 2000 - 1000) / 1000.0f;
 }
 
-ConnectionGene* ANN::findConnection(Node* from, Node* to) {
-    for (unsigned long cg = 0; cg < genome.size(); cg++) {
-        if (genome[cg].getFrom() == from && genome[cg].getTo() == to) return &genome.at(cg);
-    }
-    return nullptr;
+bool ANN::connectionExists(Node* from, Node* to) {
+    for (auto &cg : genome)
+        if (cg.getFrom() == from && cg.getTo() == to) return true;
+    return false;
 }

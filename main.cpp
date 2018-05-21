@@ -6,14 +6,14 @@
 int main() {
     // setup
     srand(1234);
-    const int INPUT_NUM = 3;
-    const int OUTPUT_NUM = 1;
+    const int INPUT_NUM = 100;
+    const int OUTPUT_NUM = 4;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
-    for (int i = 0; i < 5; i++) {
-        if (!(i % 2)) ann.addNodeMutation();
-        ann.addConnectionMutation();
+    for (int i = 0; i < 100; i++) {
+        if (!(i % 2)) ann.nodeMutation();
+        ann.connectionMutation();
         ann.weightMutation();
     }
 
@@ -56,11 +56,11 @@ int main() {
 //    ANN ann2 = ANN(INPUT_NUM, OUTPUT_NUM, "B");
 //    for (int i = 0; i < 5; i++) {
 //        if (!(i % 2)) {
-//            ann1.addNodeMutation();
-//            ann2.addNodeMutation();
+//            ann1.nodeMutation();
+//            ann2.nodeMutation();
 //        }
-//        ann1.addConnectionMutation();
-//        ann2.addConnectionMutation();
+//        ann1.connectionMutation();
+//        ann2.connectionMutation();
 //    }
 
     return 0;
