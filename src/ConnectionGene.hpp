@@ -29,6 +29,7 @@ public:
     Node* getFrom();
     Node* getTo();
     float getWeight();
+    void setWeight(float weight);
     bool getEnabled();
     void setEnabled(bool enabled);
     int getInnovation();

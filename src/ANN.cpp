@@ -126,13 +126,43 @@ void ANN::determineWeightMatrix() {
 
 // mutations
 void ANN::weightMutation() {
-    // change to randomly chosen weight
-    // change weight by 0.5% to 1.5%
-    // add or subtract between 0 and 1 to weight
-    // change sign of weight
-    // swap to weights in a single topology
-
     ConnectionGene* randomConnection = &genome.at(rand() % genome.size());
+    static const int OPERATION_NUM = 5;
+    int operation = rand() % OPERATION_NUM;
+    switch (operation) {
+        // change to random weight
+        case 0: {
+            randomConnection->setWeight(randomWeight());
+            break;
+        }
+        // change by 0.5% to 1.5%
+        case 1: {
+            randomConnection->setWeight(randomConnection->getWeight() * ((float) (rand() % 1000) / 1000.0f + 0.5f));
+            break;
+        }
+        // add or subtract between 0 and 1
+        case 2: {
+            float randVal = ((float) (rand() % 2000 - 1000) / 1000.0f);
+            randomConnection->setWeight(randomConnection->getWeight() + randVal);
+            break;
+        }
+        // change sign of weight
+        case 3: {
+            randomConnection->setWeight(-randomConnection->getWeight());
+            break;
+        }
+        // swap two weights
+        case 4: {
+            ConnectionGene *otherRandomConnection = &genome.at(rand() % genome.size());
+            float savedWeight = randomConnection->getWeight();
+            randomConnection->setWeight(otherRandomConnection->getWeight());
+            otherRandomConnection->setWeight(savedWeight);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }
 
 void ANN::addNodeMutation() {
@@ -201,7 +231,7 @@ void ANN::outputActivation(float &value) {
 
 // general
 float ANN::randomWeight() {
-    return (float)(rand() % 1000) / 1000.0f;
+    return (float)(rand() % 2000 - 1000) / 1000.0f;
 }
 
 ConnectionGene* ANN::findConnection(Node* from, Node* to) {

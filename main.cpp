@@ -6,21 +6,27 @@
 int main() {
     // setup
     srand(1);
-    const int INPUT_NUM = 100;
-    const int OUTPUT_NUM = 4;
+    const int INPUT_NUM = 3;
+    const int OUTPUT_NUM = 1;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
-    for (int i = 0; i < 100; i++) {
-        if (!(i % 2)) ann.addNodeMutation();
-        ann.addConnectionMutation();
-    }
+//    for (int i = 0; i < 100; i++) {
+//        if (!(i % 2)) ann.addNodeMutation();
+//        ann.addConnectionMutation();
+//    }
+    ann.weightMutation();
+    ann.weightMutation();
+    ann.weightMutation();
+    ann.weightMutation();
+    ann.weightMutation();
+    ann.weightMutation();
 
     // output genome
+    std::cout << "F -> T L W" << std::endl;
     for (auto &gene : ann.getGenome()) {
         if (gene.getEnabled()) {
-            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << " " << gene.getLayer() <<
-                                                                                                            std::endl;
+            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << " " << gene.getLayer() << " " << gene.getWeight() << std::endl;
         }
      }
 
@@ -35,7 +41,7 @@ int main() {
 
     // print output
     int start_s=clock();
-    for (int i = 0; i < 5000; i++) {
+    for (int i = 0; i < 1; i++) {
         output = ann.compute(inputs);
         std::cout << "OUTPUT " << i << std::endl;
         for (auto o : output) {

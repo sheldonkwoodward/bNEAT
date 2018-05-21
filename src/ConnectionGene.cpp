@@ -42,6 +42,10 @@ float ConnectionGene::getWeight() {
     return this->weight;
 }
 
+void ConnectionGene::setWeight(float weight) {
+    this->weight = weight;
+}
+
 bool ConnectionGene::getEnabled() {
     return this->enabled;
 }
