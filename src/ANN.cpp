@@ -91,6 +91,9 @@ void ANN::determineLayers() {
     for (auto &on : outputNodes) {
         determineLayers(on, 0);
     }
+    for (auto &node : inputNodes) {
+        node->setLayer(layerCount);
+    }
 }
 
 void ANN::determineLayers(Node* node, unsigned int layer) {
@@ -105,9 +108,6 @@ void ANN::determineLayers(Node* node, unsigned int layer) {
             cg.setLayer(node->getLayer());
             determineLayers(cg.getFrom(), node->getLayer());
         }
-    }
-    if (std::find(inputNodes.begin(), inputNodes.end(), node) != inputNodes.end()) {
-        node->setLayer(layerCount);
     }
 }
 
@@ -180,7 +180,6 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
 // general
 float ANN::randomWeight() {
     return (float)(rand() % 1000) / 1000.0f;
-//    return 1.0f;
 }
 
 ConnectionGene* ANN::findConnection(Node *from, Node *to) {

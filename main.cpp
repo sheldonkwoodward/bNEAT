@@ -34,8 +34,8 @@ int main() {
     std::deque<float> output = std::deque<float>();
 
     // print output
-    int start_s=clock();
-    for (int i = 0; i < 10; i++) {
+    int start_s=clock();    
+    for (int i = 0; i < 1; i++) {
         output = ann.compute(inputs);
         std::cout << "OUTPUT " << i << std::endl;
         for (auto o : output) {
