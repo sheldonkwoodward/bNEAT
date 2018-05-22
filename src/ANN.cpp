@@ -2,6 +2,7 @@
 // Created by Sheldon Woodward on 4/27/18.
 //
 
+#include <algorithm>
 #include "ANN.hpp"
 
 // constructor
