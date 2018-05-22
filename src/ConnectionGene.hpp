@@ -15,17 +15,21 @@ class ConnectionGene {
     bool enabled;
     int innovation;
     unsigned int layer;
+    static unsigned int innovationCount;
+
 public:
     // constructor
-//    ConnectionGene(Node* from, Node* to, float weight);
-    ConnectionGene(Node* from, Node* to, float weight, bool enabled, int innovation);
+    ConnectionGene(Node* from, Node* to, float weight);
+    ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation);
 
-    static bool ptrComparison(ConnectionGene* cg1, ConnectionGene* cg2);
+    // sort
+    static bool layerSort(ConnectionGene *cg1, ConnectionGene *cg2);
 
     // get set
     Node* getFrom();
     Node* getTo();
     float getWeight();
+    void setWeight(float weight);
     bool getEnabled();
     void setEnabled(bool enabled);
     int getInnovation();

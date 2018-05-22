@@ -12,20 +12,18 @@ class Node {
     float value;
 public:
     // constructor
-    // TODO: remove this constructor
-    Node();
     explicit Node(int nodeNum);
 
-    // operator overloads
-    static bool layerSort(Node n1, Node n2);
-    static bool nodeNumSort(Node* n1, Node* n2);
+    // sort
+    static bool layerSort(Node *n1, Node *n2);
+    static bool sequentialSort(Node *n1, Node *n2);
 
     // set get
     int getNodeNum();
     unsigned int getLayer();
     void setLayer(unsigned int layer);
-    void setValue(float value);
     float getValue();
+    void setValue(float value);
     float* getValuePtr();
 };
 

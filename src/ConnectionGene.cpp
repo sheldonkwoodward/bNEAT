@@ -4,24 +4,27 @@
 
 #include "ConnectionGene.hpp"
 
-//ConnectionGene::ConnectionGene(Node* from, Node* to, float weight) {
-//    this->from = from;
-//    this->to = to;
-//    this->weight = weight;
-//    this->enabled = true;
-//    this->innovation = 0;
-//}
+unsigned int ConnectionGene::innovationCount = 0;
 
-ConnectionGene::ConnectionGene(Node* from, Node* to, float weight, bool enabled, int innovation) {
+ConnectionGene::ConnectionGene(Node* from, Node* to, float weight) {
     this->from = from;
     this->to = to;
     this->weight = weight;
-    this->enabled = enabled;
-    this->innovation = innovation;
-    this->layer;
+    this->enabled = true;
+    this->innovation = innovationCount++;
+    this->layer = 0;
 }
 
-bool ConnectionGene::ptrComparison(ConnectionGene *cg1, ConnectionGene *cg2) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation) {
+    this->from = from;
+    this->to = to;
+    this->weight = weight;
+    this->enabled = true;
+    this->innovation = innovation;
+    this->layer = 0;
+}
+
+bool ConnectionGene::layerSort(ConnectionGene *cg1, ConnectionGene *cg2) {
     if (cg1->getLayer() <= cg2->getLayer()) return false;
     else if (cg1->getLayer() == cg2->getLayer() && cg1->getInnovation() < cg2->getInnovation()) return false;
     return true;
@@ -37,6 +40,10 @@ Node *ConnectionGene::getTo() {
 
 float ConnectionGene::getWeight() {
     return this->weight;
+}
+
+void ConnectionGene::setWeight(float weight) {
+    this->weight = weight;
 }
 
 bool ConnectionGene::getEnabled() {

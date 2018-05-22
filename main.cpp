@@ -1,29 +1,29 @@
 #include <iostream>
-#include <ctime>
 #include "src/NEAT.hpp"
+#include <ctime>
 
 
 int main() {
     // setup
-    srand(12320839475092);
+    srand(1234);
     const int INPUT_NUM = 100;
     const int OUTPUT_NUM = 4;
 
     // build ANN
     ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
     for (int i = 0; i < 100; i++) {
-        ann.addNodeMutation();
-        if (i % 2) {
-            ann.addConnectionMutation();
-        }
+        if (!(i % 2)) ann.nodeMutation();
+        ann.connectionMutation();
+        ann.weightMutation();
     }
 
-    // print genome
-    for (auto cg : ann.getEnabledSortedGenome()) {
-        if (cg->getEnabled())
-            std::cout << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " " << cg->getLayer() <<
-                                                                                                                  std::endl;
-    }
+    // output genome
+    std::cout << "F -> T L W" << std::endl;
+    for (auto &gene : ann.getGenome()) {
+        if (gene.getEnabled()) {
+            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << " " << gene.getLayer() << " " << gene.getWeight() << std::endl;
+        }
+     }
 
     // add inputs
     std::deque<float> inputs = std::deque<float>();
@@ -32,16 +32,36 @@ int main() {
     }
 
     // compute
-    std::deque<float> output = ann.compute(inputs);
+    std::deque<float> output = std::deque<float>();
 
     // print output
-    while (true) {
+    int start_s=clock();
+    for (int i = 0; i < 1; i++) {
         output = ann.compute(inputs);
-        std::cout << "OUTPUT" << std::endl;
+        std::cout << "OUTPUT " << i << std::endl;
         for (auto o : output) {
             std::cout << o << std::endl;
         }
+
     }
+    int stop_s=clock();
+    std::cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)*1000 << std::endl;
+
+
+//    srand(1);
+//    const int INPUT_NUM = 3;
+//    const int OUTPUT_NUM = 1;
+//
+//    ANN ann1 = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+//    ANN ann2 = ANN(INPUT_NUM, OUTPUT_NUM, "B");
+//    for (int i = 0; i < 5; i++) {
+//        if (!(i % 2)) {
+//            ann1.nodeMutation();
+//            ann2.nodeMutation();
+//        }
+//        ann1.connectionMutation();
+//        ann2.connectionMutation();
+//    }
 
     return 0;
 }
