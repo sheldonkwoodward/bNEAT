@@ -1,8 +1,0 @@
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/CMakeFiles/test.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/CMakeFiles/neat.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/tests/CMakeFiles/rebuild_cache.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/tests/CMakeFiles/test.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/tests/CMakeFiles/edit_cache.dir
-/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/cmake-build-debug/tests/CMakeFiles/tests.dir

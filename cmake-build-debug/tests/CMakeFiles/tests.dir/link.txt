@@ -1,1 +1,0 @@
-/usr/bin/c++  -Dprivate=public -g   CMakeFiles/tests.dir/testSnake.cpp.o CMakeFiles/tests.dir/__/src/Snake.cpp.o  -o tests 
