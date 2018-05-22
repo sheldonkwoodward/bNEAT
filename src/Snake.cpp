@@ -15,8 +15,8 @@ Snake::Snake(int sizeX, int sizeY) {
 
 int Snake::fitness(ANN agent, bool record) {
     snake = std::deque<std::pair<int, int>>();
-    snake.push_back(std::pair(width / 2, height / 2));
-    snake.push_back(std::pair(width / 2, (height / 2) + 1));
+    snake.push_front(std::pair(width / 2, height / 2));
+    snake.push_front(std::pair(width / 2, (height / 2) - 1));
     std::deque<float> input(width * height, 0);
     std::deque<float> output;
     food = std::nullopt;
@@ -28,25 +28,29 @@ int Snake::fitness(ANN agent, bool record) {
             generateFood();
         }
 
-        std::cout << "food: " << food.value().first <<", " << food.value().second;
+        std::cout << "food: " << food.value().first <<", " << food.value().second << std::endl;
         for (auto it : snake) {
-            std::cout << "snake: " << it.first <<  ", " << it.second;
+            std::cout << "snake: " << it.first <<  ", " << it.second << std::endl;
         }
         parseInput(input);
         output = agent.compute(input);
+//        for (auto it : output) {
+//            std::cout << it << std::endl;
+//        }
 
+        std::cout << std::endl;
         switch (validMove(output)) {
             case 0:
-                snake.push_back(std::pair(snake[0].first - 1, snake[0].second));
+                snake.push_front(std::pair(snake[0].first - 1, snake[0].second));
                 break;
             case 1:
-                snake.push_back(std::pair(snake[0].first + 1, snake[0].second));
+                snake.push_front(std::pair(snake[0].first + 1, snake[0].second));
                 break;
             case 2:;
-                snake.push_back(std::pair(snake[0].first, snake[0].second + 1));
+                snake.push_front(std::pair(snake[0].first, snake[0].second + 1));
                 break;
             case 3:;
-                snake.push_back(std::pair(snake[0].first, snake[0].second - 1));
+                snake.push_front(std::pair(snake[0].first, snake[0].second - 1));
                 break;
         }
 
@@ -148,7 +152,3 @@ void Snake::generateFood() {
     food = testFood;
 }
 
-Snake::Snake(int sizeX, int sizeY) {
-    this->sizeX = sizeX;
-    this->sizeY = sizeY;
-}
