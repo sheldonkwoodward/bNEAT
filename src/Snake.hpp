@@ -6,13 +6,13 @@
 #define NEAT_SNAKE_HPP
 
 #import <deque>
-#include <optional>
+#include <experimental/optional>
 #import "ANN.hpp"
 
 
 class Snake {
     std::deque<std::pair<int, int>> snake;
-    std::optional<std::pair<int, int>> food;
+    std::experimental::optional<std::pair<int, int>> food;
     int timeOut;
     int width;
     int height;
