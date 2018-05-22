@@ -1,0 +1,68 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/main.cpp
+iostream
+-
+src/ANN.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ANN.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ANN.cpp
+iostream
+-
+ANN.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ANN.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ANN.hpp
+deque
+-
+string
+-
+Node.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Node.hpp
+ConnectionGene.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ConnectionGene.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ConnectionGene.cpp
+ConnectionGene.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ConnectionGene.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ConnectionGene.hpp
+Node.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Node.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/NEAT.cpp
+NEAT.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/NEAT.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/NEAT.hpp
+vector
+-
+string
+-
+Snake.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Snake.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Node.cpp
+Node.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Node.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Node.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Snake.cpp
+algorithm
+-
+Snake.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Snake.hpp
+
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/Snake.hpp
+deque
+-
+ANN.hpp
+/home/charlie/School/Spring 2018/Artificial Intelligence/final_project/neat/src/ANN.hpp
+

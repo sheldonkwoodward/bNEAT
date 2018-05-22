@@ -3,31 +3,37 @@
 //
 
 #include <algorithm>
+#include <iostream>
 #include "Snake.hpp"
 
-Snake::Snake(int sizeX, int sizeY) : snake(snake) {
+Snake::Snake(int sizeX, int sizeY) {
     timeOut = sizeX * sizeY;
     width = sizeX;
     height = sizeY;
 }
 
 
-bool Snake::gameOver() {
-    return false;
-}
-
-float Snake::fitness(ANN agent, bool record) {
+int Snake::fitness(ANN agent, bool record) {
     snake = std::deque<std::pair<int, int>>();
     snake.push_back(std::pair(width / 2, height / 2));
     snake.push_back(std::pair(width / 2, (height / 2) + 1));
     std::deque<float> input(width * height, 0);
     std::deque<float> output;
+    food = std::nullopt;
+    int time = -1;
 
     do {
-        generateFood();
-        parseInput(input);
-        //output = agent.compute();
+        time += 1;
+        if (!food) {
+            generateFood();
+        }
 
+        std::cout << "food: " << food.value().first <<", " << food.value().second;
+        for (auto it : snake) {
+            std::cout << "snake: " << it.first <<  ", " << it.second;
+        }
+        parseInput(input);
+        output = agent.compute(input);
 
         switch (validMove(output)) {
             case 0:
@@ -44,10 +50,35 @@ float Snake::fitness(ANN agent, bool record) {
                 break;
         }
 
+        // Did the snake eat
+        if (snake.front() == food) {
+            food = std::nullopt;
+        } else {
+            snake.pop_back();
+        }
 
-    } while (!gameOver());
 
-    return 0;
+    } while (!gameOver(time));
+
+    return snake.size() - 2;
+}
+
+
+bool Snake::gameOver(int time) {
+    if (time == timeOut){
+        return true;
+    }
+    if (snake.front().first > width || snake.front().first < 0 || snake.front().second > height ||
+        snake.front().second < 0) {
+        return true;
+    }
+    for (int i = 1; i < snake.size(); i++) {
+        if (snake[0] == snake[i]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int Snake::validMove(std::deque<float> &output) {
@@ -102,12 +133,17 @@ void Snake::parseInput(std::deque<float> &input) {
     }
 
     // parse food into input
-    input[width * food.first + food.first] = 1;
+    if (food) {
+        input[width * food.value().first + food.value().first] = 1;
+    }
 }
 
 void Snake::generateFood() {
+    std::pair<int, int> testFood;
     do {
-        food.first = rand() % width;
-        food.second = rand() % height;
-    } while (find(snake.begin(), snake.end(), food) != snake.end());
+        testFood.first = rand() % width;
+        testFood.second = rand() % height;
+    } while (find(snake.begin(), snake.end(), testFood) != snake.end());
+
+    food = testFood;
 }
