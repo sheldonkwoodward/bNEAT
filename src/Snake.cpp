@@ -13,7 +13,7 @@ Snake::Snake(int sizeX, int sizeY) {
 }
 
 
-int Snake::fitness(ANN agent, bool record) {
+int Snake::fitness(ANN &agent, bool record) {
     snake = std::deque<std::pair<int, int>>();
     snake.push_front(std::pair(width / 2, height / 2));
     snake.push_front(std::pair(width / 2, (height / 2) - 1));
