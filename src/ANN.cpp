@@ -2,84 +2,232 @@
 // Created by Sheldon Woodward on 4/27/18.
 //
 
-#include <iostream>
 #include "ANN.hpp"
 
-ANN::ANN(std::string species) {
+// constructor
+ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
-    this->species = species;
-}
 
-void ANN::determineInputOutput() {
-    // clear existing inputs and outputs
     this->inputNodes = std::deque<Node*>();
     this->outputNodes = std::deque<Node*>();
+    this->layerSortedNodes = std::deque<Node*>();
+    this->nonInputLayerSortedNodes = std::deque<Node*>();
+    this->sequentialSortedNodes = std::deque<Node*>();
+    this->enabledSortedGenome = std::deque<ConnectionGene*>();
 
-    // check all nodes
-    for (auto &node : this->nodes) {
-        bool isInput = true;
-        bool isOutput = true;
-        // check against genome
-        for (auto &g : this->genome) {
-            if (&node == g.getTo()) isInput = false;
-            else if (&node == g.getFrom()) isOutput = false;
+    this->weightMatrix = std::deque<std::deque<float>>();
+    this->inputVector = std::deque<float*>();
+
+    this->species = std::move(species);
+    this->layerCount = 1;
+
+    // add inputs and outputs
+    for (int i = 0; i < inputNum; i++) {
+        nodes.emplace_back((int)nodes.size());
+        inputNodes.push_back(&nodes.back());
+    }
+    for (int o = 0; o < outputNum; o++) {
+        nodes.emplace_back((int)nodes.size());
+        outputNodes.push_back(&nodes.back());
+    }
+    setup();
+}
+
+// set get
+std::deque<ConnectionGene> ANN::getGenome() {
+    return genome;
+}
+
+std::string ANN::getSpecies() {
+    return species;
+}
+
+// setup functions
+void ANN::setup() {
+    sortNodes();
+    determineLayers();
+    sortGenome();
+    determineWeightMatrix();
+}
+
+void ANN::sortNodes() {
+    layerSortedNodes.clear();
+    nonInputLayerSortedNodes.clear();
+    sequentialSortedNodes.clear();
+    for (auto &node : nodes) {
+        layerSortedNodes.push_back(&node);
+        sequentialSortedNodes.push_back(&node);
+        if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
+            nonInputLayerSortedNodes.push_back(&node);
         }
-        // add to input or output list
-        if (isInput) inputNodes.push_back(&node);
-        else if (isOutput) outputNodes.push_back(&node);
+    }
+    std::sort(layerSortedNodes.begin(), layerSortedNodes.end(), Node::layerSort);
+    std::sort(nonInputLayerSortedNodes.begin(), nonInputLayerSortedNodes.end(), Node::layerSort);
+    std::sort(sequentialSortedNodes.begin(), sequentialSortedNodes.end(), Node::sequentialSort);
+}
+
+void ANN::sortGenome() {
+    enabledSortedGenome.clear();
+    for (auto &cg : genome) {
+        if (cg.getEnabled()) {
+            enabledSortedGenome.push_back(&cg);
+        }
+    }
+    std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::layerSort);
+}
+
+void ANN::determineLayers() {
+    for (auto &on : outputNodes) {
+        determineLayers(on, 0);
+    }
+    for (auto &node : inputNodes) {
+        node->setLayer(layerCount);
+    }
+}
+
+void ANN::determineLayers(Node* node, unsigned int layer) {
+    if (node->getLayer() <= layer && std::find(outputNodes.begin(), outputNodes.end(), node) == outputNodes.end()) {
+        node->setLayer(layer + 1);
+        if (layerCount <= layer + 1) {
+            layerCount = layer + 1;
+        }
+    }
+    for (auto &cg : genome) {
+        if (cg.getTo() == node) {
+            cg.setLayer(node->getLayer());
+            determineLayers(cg.getFrom(), node->getLayer());
+        }
     }
 }
 
 void ANN::determineWeightMatrix() {
-    weightMatrix = std::deque<std::deque<float>>();
-    for (int row = 0; row < nodes.size() - inputNodes.size(); row++) {
-        weightMatrix.emplace_back();
-        for (int col = 0; col < nodes.size(); col++) {
-            weightMatrix[row].push_back(0.0);
+    weightMatrix.clear();
+    for (int row = 0; row < nodes.size(); row++) {
+        weightMatrix.emplace_back(nodes.size(), 0.0f);
+    }
+
+    // build weight matrix
+    for (auto &cg : enabledSortedGenome) {
+        weightMatrix[cg->getTo()->getNodeNum()][cg->getFrom()->getNodeNum()] = cg->getWeight();
+    }
+}
+
+// mutations
+void ANN::weightMutation() {
+    ConnectionGene* randomConnection = &genome.at(rand() % genome.size());
+    static const int OPERATION_NUM = 5;
+    int operation = rand() % OPERATION_NUM;
+    switch (operation) {
+        // change to random weight
+        case 0: {
+            randomConnection->setWeight(randomWeight());
+            break;
+        }
+        // change by 0.5% to 1.5%
+        case 1: {
+            randomConnection->setWeight(randomConnection->getWeight() * ((float) (rand() % 1000) / 1000.0f + 0.5f));
+            break;
+        }
+        // add or subtract between 0 and 1
+        case 2: {
+            float randVal = ((float) (rand() % 2000 - 1000) / 1000.0f);
+            randomConnection->setWeight(randomConnection->getWeight() + randVal);
+            break;
+        }
+        // change sign of weight
+        case 3: {
+            randomConnection->setWeight(-randomConnection->getWeight());
+            break;
+        }
+        // swap two weights
+        case 4: {
+            ConnectionGene *otherRandomConnection = &genome.at(rand() % genome.size());
+            float savedWeight = randomConnection->getWeight();
+            randomConnection->setWeight(otherRandomConnection->getWeight());
+            otherRandomConnection->setWeight(savedWeight);
+            break;
+        }
+        default: {
+            break;
         }
     }
-    for (auto cg : genome) {
-        weightMatrix[cg.getTo()->getNodeNum() - inputNodes.size()][cg.getFrom()->getNodeNum()] = cg.getWeight();
+    setup();
+}
+
+void ANN::nodeMutation() {
+    if (genome.empty()) return;
+    ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
+    nodes.emplace_back((int)nodes.size());
+    genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight());
+    genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight());
+    randomConnection->setEnabled(false);
+    setup();
+}
+
+void ANN::connectionMutation() {
+    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
+    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
+        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
+            if (nodes[n0].getLayer() > nodes[n1].getLayer() && !connectionExists(&nodes.at(n0), &nodes.at(n1))) {
+                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
+            }
+        }
     }
+    if (possibleConnections.empty()) return;
+    auto connection = possibleConnections[rand() % possibleConnections.size()];
+    genome.emplace_back(connection.getFrom(), connection.getTo(), connection.getWeight());
+    setup();
 }
 
-void ANN::setup() {
-    determineInputOutput();
-    determineWeightMatrix();
-}
-
+// computation
 std::deque<float> ANN::compute(std::deque<float> inputs) {
-    // set inputs
-    if (inputs.size() != inputNodes.size()) return std::deque<float>();
+    // set inputs and outputs
+    if (inputs.size() != inputNodes.size()) return std::deque<float>(outputNodes.size(), 0.0f);
     for (int i = 0; i < inputs.size(); i++) inputNodes[i]->setValue(inputs[i]);
+    std::deque<float> outputs = std::deque<float>();
 
-    // set input vector
-    inputVector = std::deque<float*>();
-    for (auto &node : nodes) inputVector.push_back(node.getValuePtr());
+    // set inputVector
+    inputVector.clear();
+    for (auto &node : sequentialSortedNodes) inputVector.push_back(node->getValuePtr());
 
     // feed network
-    for (int weightRow = 0; weightRow < weightMatrix.size(); weightRow++) {
-        float* currentInput = inputVector[weightRow + inputNodes.size()];
+    for (auto &node : nonInputLayerSortedNodes) {
+        float* currentInput = inputVector[node->getNodeNum()];
         *currentInput = 0.0;
-        for (int step = 0; step < nodes.size(); step++) {
-            *currentInput += weightMatrix[weightRow][step] * *inputVector[step];
+        for (int n = 0; n < nodes.size(); n++) {
+            *currentInput += weightMatrix[node->getNodeNum()][n] **inputVector[n];
         }
-        if (*currentInput < 0) *currentInput = static_cast<float>(*currentInput / 100.0); // activation function
+        if (node->getLayer() != 0) hiddenActivation(*currentInput);
+        else {
+            outputActivation(*node->getValuePtr());
+            outputs.push_back(node->getValue());
+        }
     }
 
     // gather outputs
-    std::deque<float> outputs = std::deque<float>();
-    for (auto node : outputNodes) outputs.push_back(node->getValue());
+    outputs.clear();
+    for (auto &node : outputNodes) outputs.push_back(node->getValue());
     return outputs;
 }
 
-Node* ANN::addNode(Node node) {
-    this->nodes.push_back(node);
-    return &this->nodes.back();
+// activation
+void ANN::hiddenActivation(float &value) {
+    // leaky ReLU activation
+    if (value < 0.0f) value = value / 100.0f;
 }
 
-ConnectionGene* ANN::addConnectionGene(ConnectionGene connectionGene) {
-    this->genome.push_back(connectionGene);
-    return &this->genome.back();
+void ANN::outputActivation(float &value) {
+    // identity activation
+}
+
+// other
+float ANN::randomWeight() {
+    return (float)(rand() % 2000 - 1000) / 1000.0f;
+}
+
+bool ANN::connectionExists(Node* from, Node* to) {
+    for (auto &cg : genome)
+        if (cg.getFrom() == from && cg.getTo() == to) return true;
+    return false;
 }

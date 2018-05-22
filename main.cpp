@@ -1,32 +1,67 @@
 #include <iostream>
-#include "src/ANN.hpp"
+#include "src/NEAT.hpp"
+#include <ctime>
 
 
 int main() {
-    ANN ann = ANN("SPECIES");
+    // setup
+    srand(1234);
+    const int INPUT_NUM = 100;
+    const int OUTPUT_NUM = 4;
 
-    auto n0 = ann.addNode(Node(0));
-    auto n1 = ann.addNode(Node(1));
-    auto n2 = ann.addNode(Node(2));
-    auto n3 = ann.addNode(Node(3));
-    auto n4 = ann.addNode(Node(4));
-    auto n5 = ann.addNode(Node(5));
+    // build ANN
+    ANN ann = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+    for (int i = 0; i < 100; i++) {
+        if (!(i % 2)) ann.nodeMutation();
+        ann.connectionMutation();
+        ann.weightMutation();
+    }
 
-    auto cg0 = ann.addConnectionGene(ConnectionGene(n0, n3, 1.0));
-    auto cg1 = ann.addConnectionGene(ConnectionGene(n1, n3, 1.0));
-    auto cg2 = ann.addConnectionGene(ConnectionGene(n2, n3, 1.0));
-    auto cg3 = ann.addConnectionGene(ConnectionGene(n0, n4, 1.0));
-    auto cg4 = ann.addConnectionGene(ConnectionGene(n1, n4, 1.0));
-    auto cg5 = ann.addConnectionGene(ConnectionGene(n2, n4, 1.0));
-    auto cg6 = ann.addConnectionGene(ConnectionGene(n3, n5, 1.0));
-    auto cg7 = ann.addConnectionGene(ConnectionGene(n4, n5, 1.0));
+    // output genome
+    std::cout << "F -> T L W" << std::endl;
+    for (auto &gene : ann.getGenome()) {
+        if (gene.getEnabled()) {
+            std::cout << gene.getFrom()->getNodeNum() << " -> " << gene.getTo()->getNodeNum() << " " << gene.getLayer() << " " << gene.getWeight() << std::endl;
+        }
+     }
 
+    // add inputs
     std::deque<float> inputs = std::deque<float>();
-    inputs.push_back(1.0);
-    inputs.push_back(1.0);
-    inputs.push_back(1.0);
-    ann.setup();
-    std::cout << ann.compute(inputs)[0] << std::endl;
+    for (int i = 0; i < INPUT_NUM; i++) {
+        inputs.push_back(1.0f);
+    }
+
+    // compute
+    std::deque<float> output = std::deque<float>();
+
+    // print output
+    int start_s=clock();
+    for (int i = 0; i < 1; i++) {
+        output = ann.compute(inputs);
+        std::cout << "OUTPUT " << i << std::endl;
+        for (auto o : output) {
+            std::cout << o << std::endl;
+        }
+
+    }
+    int stop_s=clock();
+    std::cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)*1000 << std::endl;
+
+
+//    srand(1);
+//    const int INPUT_NUM = 3;
+//    const int OUTPUT_NUM = 1;
+//
+//    ANN ann1 = ANN(INPUT_NUM, OUTPUT_NUM, "A");
+//    ANN ann2 = ANN(INPUT_NUM, OUTPUT_NUM, "B");
+//    for (int i = 0; i < 5; i++) {
+//        if (!(i % 2)) {
+//            ann1.nodeMutation();
+//            ann2.nodeMutation();
+//        }
+//        ann1.connectionMutation();
+//        ann2.connectionMutation();
+//    }
 
     return 0;
 }

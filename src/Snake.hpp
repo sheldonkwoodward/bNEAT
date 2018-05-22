@@ -11,7 +11,6 @@
 
 
 class Snake {
-
     std::deque<std::pair<int, int>> snake;
     std::optional<std::pair<int, int>> food;
     int timeOut;

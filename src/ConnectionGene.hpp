@@ -14,15 +14,28 @@ class ConnectionGene {
     float weight;
     bool enabled;
     int innovation;
+    unsigned int layer;
+    static unsigned int innovationCount;
+
 public:
     // constructor
     ConnectionGene(Node* from, Node* to, float weight);
-    ConnectionGene(Node* from, Node* to, float weight, bool enabled, int innovation);
+    ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation);
+
+    // sort
+    static bool layerSort(ConnectionGene *cg1, ConnectionGene *cg2);
 
     // get set
     Node* getFrom();
     Node* getTo();
     float getWeight();
+    void setWeight(float weight);
+    bool getEnabled();
+    void setEnabled(bool enabled);
+    int getInnovation();
+    void setInnovation(int innovation);
+    unsigned int getLayer();
+    void setLayer(unsigned int layer);
 };
 
 

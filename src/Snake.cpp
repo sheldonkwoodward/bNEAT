@@ -147,3 +147,8 @@ void Snake::generateFood() {
 
     food = testFood;
 }
+
+Snake::Snake(int sizeX, int sizeY) {
+    this->sizeX = sizeX;
+    this->sizeY = sizeY;
+}

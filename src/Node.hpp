@@ -8,17 +8,23 @@
 
 class Node {
     int nodeNum;
+    unsigned int layer;
     float value;
 public:
     // constructor
-    Node();
     explicit Node(int nodeNum);
 
+    // sort
+    static bool layerSort(Node *n1, Node *n2);
+    static bool sequentialSort(Node *n1, Node *n2);
+
     // set get
-    void setValue(float value);
-    float getValue();
-    float* getValuePtr();
     int getNodeNum();
+    unsigned int getLayer();
+    void setLayer(unsigned int layer);
+    float getValue();
+    void setValue(float value);
+    float* getValuePtr();
 };
 
 
