@@ -6,8 +6,6 @@
 
 unsigned int ConnectionGene::innovationCount = 0;
 
-std::deque<std::pair<unsigned int, unsigned int>> ConnectionGene::innovationPairs = std::deque<std::pair<unsigned int, unsigned int>>();
-
 // constructor
 ConnectionGene::ConnectionGene(Node* from, Node* to, float weight) {
     this->from = from;
@@ -16,7 +14,6 @@ ConnectionGene::ConnectionGene(Node* from, Node* to, float weight) {
     this->enabled = true;
     this->layer = 0;
     this->innovation = innovationCount++;
-    innovationPairs.emplace_back(std::pair(from->getNodeNum(), to->getNodeNum()));
 }
 
 ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation) {
@@ -82,8 +79,4 @@ void ConnectionGene::setLayer(unsigned int layer) {
 
 unsigned int ConnectionGene::getInnovationCount() {
     return innovationCount;
-}
-
-std::pair<unsigned int, unsigned int>* ConnectionGene::getInnovationPair() {
-    return &innovationPairs[innovation];
 }

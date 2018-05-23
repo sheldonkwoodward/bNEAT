@@ -15,10 +15,15 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
     // TODO: crossover
     ANN ann1 = ANN(100, 4, "AAA");
     ANN ann2 = ANN(100, 4, "AAA");
-    ann1.connectionMutation();
+
     ann1.connectionMutation();
     ann2.connectionMutation();
+//    ann1.connectionMutation();
+//    ann1.connectionMutation();
+//    ann1.nodeMutation();
+    ann1.nodeMutation();
     ann2.connectionMutation();
+
     ann1.setFitness(1.0f);
     ann2.setFitness(2.0f);
     crossover(ann1, ann2);
@@ -28,15 +33,23 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
 }
 
 ANN NEAT::crossover(ANN &ann1, ANN &ann2) {
-    std::cout << "ANN 1" << std::endl;
-    for (auto pair : ann1.getGenomePairs()) {
-        std::cout << pair->first << " -> " << pair->second << std::endl;
-    }
+//    ann1.getGenomeGenes();
+//    std::cout << "ANN 1 " << std::endl;
+//    int accum = 0;
+//    for (auto pair : ann1.getGenomeGenes()) {
+//        std::cout << accum++ << ": ";
+//        if (pair != nullptr) std::cout << pair->from << " -> " << pair->to << std::endl;
+//        else std::cout << std::endl;
+//    }
+//
+//    std::cout << "ANN 2" << std::endl;
+//    accum = 0;
+//    for (auto pair : ann2.getGenomeGenes()) {
+//        std::cout << accum++ << ": ";
+//        if (pair != nullptr) std::cout << pair->from << " -> " << pair->to << std::endl;
+//        else std::cout << std::endl;
+//    }
 
-    std::cout << "ANN 2" << std::endl;
-    for (auto pair : ann2.getGenomePairs()) {
-        std::cout << pair->first << " -> " << pair->second << std::endl;
-    }
 
     return ANN(0, 0, "");
 }

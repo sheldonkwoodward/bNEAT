@@ -18,7 +18,6 @@ class ConnectionGene {
     int innovation;
     unsigned int layer;
     static unsigned int innovationCount;
-    static std::deque<std::pair<unsigned int, unsigned int>> innovationPairs;
 
 public:
     // constructor
@@ -41,7 +40,6 @@ public:
     unsigned int getLayer();
     void setLayer(unsigned int layer);
     static unsigned int getInnovationCount();
-    std::pair<unsigned int, unsigned int>* getInnovationPair();
 };
 
 
