@@ -19,6 +19,7 @@ class ANN {
     // topology
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
+    std::deque<std::pair<unsigned int, unsigned int>*> genomePairs;
 
     // pointer structures
     std::deque<Node*> inputNodes;
@@ -35,14 +36,17 @@ class ANN {
     // other attributes
     std::string species;
     unsigned int layerCount;
+    float fitness;
 
 public:
     // constructors
     ANN(int inputNum, int outputNum, std::string species);
 
     // set get
-    std::deque<ConnectionGene> getGenome();
+    std::deque<std::pair<unsigned int, unsigned int>*> getGenomePairs();
     std::string getSpecies();
+    float getFitness();
+    void setFitness(float fitness);
 
     // setup
     void setup();
@@ -67,6 +71,7 @@ public:
     // other
     float randomWeight();
     bool connectionExists(Node* from, Node* to);
+    void addGenomePair(std::pair<unsigned int, unsigned int>* pair);
 };
 
 

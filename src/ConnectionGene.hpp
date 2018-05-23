@@ -5,6 +5,8 @@
 #ifndef NEAT_CONNECTIONGENE_HPP
 #define NEAT_CONNECTIONGENE_HPP
 
+#include <deque>
+
 #include "Node.hpp"
 
 
@@ -16,6 +18,7 @@ class ConnectionGene {
     int innovation;
     unsigned int layer;
     static unsigned int innovationCount;
+    static std::deque<std::pair<unsigned int, unsigned int>> innovationPairs;
 
 public:
     // constructor
@@ -24,6 +27,7 @@ public:
 
     // sort
     static bool layerSort(ConnectionGene *cg1, ConnectionGene *cg2);
+    static bool innovationSort(ConnectionGene &cg1, ConnectionGene &cg2);
 
     // get set
     Node* getFrom();
@@ -36,6 +40,8 @@ public:
     void setInnovation(int innovation);
     unsigned int getLayer();
     void setLayer(unsigned int layer);
+    static unsigned int getInnovationCount();
+    std::pair<unsigned int, unsigned int>* getInnovationPair();
 };
 
 

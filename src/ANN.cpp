@@ -9,6 +9,7 @@
 ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
+    this->genomePairs = std::deque<std::pair<unsigned int, unsigned int>*>();
 
     this->inputNodes = std::deque<Node*>();
     this->outputNodes = std::deque<Node*>();
@@ -22,6 +23,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
 
     this->species = std::move(species);
     this->layerCount = 1;
+    this->fitness = NULL;
 
     // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
@@ -36,12 +38,21 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
 }
 
 // set get
-std::deque<ConnectionGene> ANN::getGenome() {
-    return genome;
+std::deque<std::pair<unsigned int, unsigned int>*> ANN::getGenomePairs() {
+    while (genomePairs.size() < ConnectionGene::getInnovationCount()) genomePairs.emplace_back(nullptr);
+    return genomePairs;
 }
 
 std::string ANN::getSpecies() {
     return species;
+}
+
+float ANN::getFitness() {
+    return fitness;
+}
+
+void ANN::setFitness(float fitness) {
+    this->fitness = fitness;
 }
 
 // setup functions
@@ -162,6 +173,7 @@ void ANN::nodeMutation() {
     nodes.emplace_back((int)nodes.size());
     genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight());
     genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight());
+    addGenomePair(genome.back().getInnovationPair());
     randomConnection->setEnabled(false);
     setup();
 }
@@ -178,6 +190,7 @@ void ANN::connectionMutation() {
     if (possibleConnections.empty()) return;
     auto connection = possibleConnections[rand() % possibleConnections.size()];
     genome.emplace_back(connection.getFrom(), connection.getTo(), connection.getWeight());
+    addGenomePair(genome.back().getInnovationPair());
     setup();
 }
 
@@ -231,4 +244,9 @@ bool ANN::connectionExists(Node* from, Node* to) {
     for (auto &cg : genome)
         if (cg.getFrom() == from && cg.getTo() == to) return true;
     return false;
+}
+
+void ANN::addGenomePair(std::pair<unsigned int, unsigned int>* pair) {
+    while (genomePairs.size() < ConnectionGene::getInnovationCount() - 1) genomePairs.emplace_back(nullptr);
+    genomePairs.emplace_back(pair);
 }
