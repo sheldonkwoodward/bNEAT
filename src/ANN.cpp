@@ -49,6 +49,20 @@ void ANN::setFitness(float fitness) {
     this->fitness = fitness;
 }
 
+std::deque<Gene> ANN::getGenes() {
+    std::deque<Gene> genes = std::deque<Gene>();
+    auto cg = genome.begin();
+    for (int i = 0; i < ConnectionGene::getInnovationCount(); i++) {
+        if (cg->getInnovation() != i) {
+            genes.emplace_back(0, 0, false, false);
+        } else {
+            genes.emplace_back(cg->getFrom()->getNodeNum(), cg->getTo()->getNodeNum(), cg->getEnabled());
+            cg++;
+        }
+    }
+    return genes;
+}
+
 // setup functions
 void ANN::setup() {
     sortNodes();

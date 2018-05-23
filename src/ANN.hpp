@@ -46,6 +46,7 @@ public:
     std::string getSpecies();
     float getFitness();
     void setFitness(float fitness);
+    std::deque<Gene> getGenes();
 
     // setup
     void setup();
