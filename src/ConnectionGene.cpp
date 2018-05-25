@@ -25,6 +25,15 @@ ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int 
     this->innovation = innovation;
 }
 
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation, bool enabled) {
+    this->from = from;
+    this->to = to;
+    this->weight = weight;
+    this->enabled = enabled;
+    this->layer = 0;
+    this->innovation = innovation;
+}
+
 // sort
 bool ConnectionGene::layerSort(ConnectionGene *cg1, ConnectionGene *cg2) {
     if (cg1->getLayer() <= cg2->getLayer()) return false;
@@ -34,6 +43,10 @@ bool ConnectionGene::layerSort(ConnectionGene *cg1, ConnectionGene *cg2) {
 
 bool ConnectionGene::innovationSort(ConnectionGene &cg1, ConnectionGene &cg2) {
     return cg1.getInnovation() > cg1.getInnovation();
+}
+
+bool ConnectionGene::innovationSortPtr(ConnectionGene *cg1, ConnectionGene *cg2) {
+    return cg1->getInnovation() > cg1->getInnovation();
 }
 
 Node *ConnectionGene::getFrom() {

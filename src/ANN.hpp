@@ -13,7 +13,6 @@
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
-#include "Gene.h"
 
 
 class ANN {
@@ -27,6 +26,7 @@ class ANN {
     std::deque<Node*> layerSortedNodes;
     std::deque<Node*> nonInputLayerSortedNodes;
     std::deque<Node*> sequentialSortedNodes;
+    std::deque<ConnectionGene*> innovationSortedGenome;
     std::deque<ConnectionGene*> enabledSortedGenome;
 
     // computation structures
@@ -39,14 +39,14 @@ class ANN {
     float fitness;
 
 public:
-    // constructors
-    ANN(int inputNum, int outputNum, std::string species);
+    // constructor
+    ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
+    ANN(ANN &ann1, ANN &ann2);
 
     // set get
     std::string getSpecies();
     float getFitness();
     void setFitness(float fitness);
-    std::deque<Gene> getGenes();
 
     // setup
     void setup();
@@ -70,6 +70,7 @@ public:
 
     // other
     float randomWeight();
+    Node* findNode(unsigned int node);
     bool connectionExists(Node* from, Node* to);
 };
 

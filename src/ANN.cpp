@@ -6,7 +6,7 @@
 #include "ANN.hpp"
 
 // constructor
-ANN::ANN(int inputNum, int outputNum, std::string species) {
+ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
 
@@ -15,6 +15,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     this->layerSortedNodes = std::deque<Node*>();
     this->nonInputLayerSortedNodes = std::deque<Node*>();
     this->sequentialSortedNodes = std::deque<Node*>();
+    this->innovationSortedGenome = std::deque<ConnectionGene*>();
     this->enabledSortedGenome = std::deque<ConnectionGene*>();
 
     this->weightMatrix = std::deque<std::deque<float>>();
@@ -22,7 +23,7 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
 
     this->species = std::move(species);
     this->layerCount = 1;
-    this->fitness = NULL;
+    this->fitness = 0.0f;
 
     // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
@@ -36,6 +37,75 @@ ANN::ANN(int inputNum, int outputNum, std::string species) {
     setup();
 }
 
+ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.size(), "") {
+    auto genomeItr1 = ann1.innovationSortedGenome.begin();
+    auto genomeItr2 = ann2.innovationSortedGenome.begin();
+
+    // same fitness
+    while (genomeItr1 != ann1.innovationSortedGenome.end() && genomeItr2 != ann2.innovationSortedGenome.end()) {
+        // matching innovation
+        if ((*genomeItr1)->getInnovation() == (*genomeItr2)->getInnovation()) {
+            // add connection to genome
+            genome.emplace_back((*genomeItr1)->getFrom(),
+                                (*genomeItr1)->getTo(),
+                                (*genomeItr1)->getWeight(),
+                                (*genomeItr1)->getInnovation(),
+                                (*genomeItr1)->getEnabled());
+            // increment both iterators
+            if (genomeItr1 != ann1.innovationSortedGenome.end()) ++genomeItr1;
+            if (genomeItr2 != ann2.innovationSortedGenome.end()) ++genomeItr2;
+        }
+        // disjoint or excess innovation
+        else {
+            // determine ptr with smallest innovation
+            auto smallerGenomePtr = &genomeItr1;
+            ANN* smallerAnn = &ann1;
+            if ((*genomeItr2)->getInnovation() < (*genomeItr1)->getInnovation()) {
+                smallerGenomePtr = &genomeItr2;
+                smallerAnn = &ann2;
+            }
+            // add smaller innovation to genome
+            genome.emplace_back((**smallerGenomePtr)->getFrom(),
+                                (**smallerGenomePtr)->getTo(),
+                                (**smallerGenomePtr)->getWeight(),
+                                (**smallerGenomePtr)->getInnovation(),
+                                (**smallerGenomePtr)->getEnabled());
+            // increment iterator with smallest innovation
+            if(*smallerGenomePtr != smallerAnn->innovationSortedGenome.end()) ++(*smallerGenomePtr);
+        }
+    }
+    // excess genes
+    while (genomeItr1 != ann1.innovationSortedGenome.end()) {
+        genome.emplace_back((*genomeItr1)->getFrom(),
+                            (*genomeItr1)->getTo(),
+                            (*genomeItr1)->getWeight(),
+                            (*genomeItr1)->getInnovation(),
+                            (*genomeItr1)->getEnabled());
+        ++genomeItr1;
+    }
+    while (genomeItr2 != ann2.innovationSortedGenome.end()) {
+        genome.emplace_back((*genomeItr2)->getFrom(),
+                            (*genomeItr2)->getTo(),
+                            (*genomeItr2)->getWeight(),
+                            (*genomeItr2)->getInnovation(),
+                            (*genomeItr2)->getEnabled());
+        ++genomeItr2;
+    }
+    setup();
+    std::cout << "ANN 1" << std::endl;
+    for (auto gene : ann1.genome) {
+        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
+    }
+    std::cout << "ANN 2" << std::endl;
+    for (auto gene : ann2.genome) {
+        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
+    }
+    std::cout << "NEW ANN" << std::endl;
+    for (auto gene : genome) {
+        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
+    }
+}
+
 // set get
 std::string ANN::getSpecies() {
     return species;
@@ -47,20 +117,6 @@ float ANN::getFitness() {
 
 void ANN::setFitness(float fitness) {
     this->fitness = fitness;
-}
-
-std::deque<Gene> ANN::getGenes() {
-    std::deque<Gene> genes = std::deque<Gene>();
-    auto cg = genome.begin();
-    for (int i = 0; i < ConnectionGene::getInnovationCount(); i++) {
-        if (cg->getInnovation() != i) {
-            genes.emplace_back(0, 0, false, false);
-        } else {
-            genes.emplace_back(cg->getFrom()->getNodeNum(), cg->getTo()->getNodeNum(), cg->getEnabled());
-            cg++;
-        }
-    }
-    return genes;
 }
 
 // setup functions
@@ -88,12 +144,15 @@ void ANN::sortNodes() {
 }
 
 void ANN::sortGenome() {
+    innovationSortedGenome.clear();
     enabledSortedGenome.clear();
     for (auto &cg : genome) {
+        innovationSortedGenome.push_back(&cg);
         if (cg.getEnabled()) {
             enabledSortedGenome.push_back(&cg);
         }
     }
+    std::sort(innovationSortedGenome.begin(), innovationSortedGenome.end(), ConnectionGene::innovationSortPtr);
     std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::layerSort);
 }
 
@@ -244,6 +303,15 @@ void ANN::outputActivation(float &value) {
 // other
 float ANN::randomWeight() {
     return (float)(rand() % 2000 - 1000) / 1000.0f;
+}
+
+Node* ANN::findNode(unsigned int node) {
+    for (int n = 0; n < nodes.size(); n++) {
+        if (nodes[n].getNodeNum() == node) {
+            return &nodes.at((unsigned long)n);
+        }
+    }
+    return nullptr;
 }
 
 bool ANN::connectionExists(Node* from, Node* to) {
