@@ -70,8 +70,9 @@ public:
 
     // other
     float randomWeight();
-    Node* findNode(unsigned int node);
+    Node* findOrCreateNode(int node);
     bool connectionExists(Node* from, Node* to);
+    bool innovationExists(int innovation);
 };
 
 

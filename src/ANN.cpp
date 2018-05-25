@@ -46,8 +46,8 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
         // matching innovation
         if ((*genomeItr1)->getInnovation() == (*genomeItr2)->getInnovation()) {
             // add connection to genome
-            genome.emplace_back((*genomeItr1)->getFrom(),
-                                (*genomeItr1)->getTo(),
+            genome.emplace_back(findOrCreateNode((*genomeItr1)->getFrom()->getNodeNum()),
+                                findOrCreateNode((*genomeItr1)->getTo()->getNodeNum()),
                                 (*genomeItr1)->getWeight(),
                                 (*genomeItr1)->getInnovation(),
                                 (*genomeItr1)->getEnabled());
@@ -65,8 +65,8 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                 smallerAnn = &ann2;
             }
             // add smaller innovation to genome
-            genome.emplace_back((**smallerGenomePtr)->getFrom(),
-                                (**smallerGenomePtr)->getTo(),
+            genome.emplace_back(findOrCreateNode((**smallerGenomePtr)->getFrom()->getNodeNum()),
+                                findOrCreateNode((**smallerGenomePtr)->getTo()->getNodeNum()),
                                 (**smallerGenomePtr)->getWeight(),
                                 (**smallerGenomePtr)->getInnovation(),
                                 (**smallerGenomePtr)->getEnabled());
@@ -76,34 +76,28 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
     }
     // excess genes
     while (genomeItr1 != ann1.innovationSortedGenome.end()) {
-        genome.emplace_back((*genomeItr1)->getFrom(),
-                            (*genomeItr1)->getTo(),
+        genome.emplace_back(findOrCreateNode((*genomeItr1)->getFrom()->getNodeNum()),
+                            findOrCreateNode((*genomeItr1)->getTo()->getNodeNum()),
                             (*genomeItr1)->getWeight(),
                             (*genomeItr1)->getInnovation(),
                             (*genomeItr1)->getEnabled());
         ++genomeItr1;
     }
     while (genomeItr2 != ann2.innovationSortedGenome.end()) {
-        genome.emplace_back((*genomeItr2)->getFrom(),
-                            (*genomeItr2)->getTo(),
+        genome.emplace_back(findOrCreateNode((*genomeItr2)->getFrom()->getNodeNum()),
+                            findOrCreateNode((*genomeItr2)->getTo()->getNodeNum()),
                             (*genomeItr2)->getWeight(),
                             (*genomeItr2)->getInnovation(),
                             (*genomeItr2)->getEnabled());
         ++genomeItr2;
     }
-    setup();
-    std::cout << "ANN 1" << std::endl;
-    for (auto gene : ann1.genome) {
-        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
+    for (auto node : nodes) {
+        std::cout << node.getNodeNum() << std::endl;
     }
-    std::cout << "ANN 2" << std::endl;
-    for (auto gene : ann2.genome) {
-        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
-    }
-    std::cout << "NEW ANN" << std::endl;
     for (auto gene : genome) {
-        std::cout << gene.getInnovation() << " " << gene.getEnabled() << " " << gene.getWeight() << std::endl;
+        std::cout << gene.getFrom()->getNodeNum() << "\t-> " << gene.getTo()->getNodeNum() << std::endl;
     }
+    setup();
 }
 
 // set get
@@ -305,17 +299,25 @@ float ANN::randomWeight() {
     return (float)(rand() % 2000 - 1000) / 1000.0f;
 }
 
-Node* ANN::findNode(unsigned int node) {
+Node* ANN::findOrCreateNode(int node) {
     for (int n = 0; n < nodes.size(); n++) {
         if (nodes[n].getNodeNum() == node) {
             return &nodes.at((unsigned long)n);
         }
     }
-    return nullptr;
+    nodes.emplace_back(node);
+    return &nodes.back();
 }
 
 bool ANN::connectionExists(Node* from, Node* to) {
     for (auto &cg : genome)
         if (cg.getFrom() == from && cg.getTo() == to) return true;
+    return false;
+}
+
+bool ANN::innovationExists(int innovation) {
+    for (auto &gene : genome) {
+        if (gene.getInnovation() == innovation) return true;
+    }
     return false;
 }
