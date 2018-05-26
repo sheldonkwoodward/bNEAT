@@ -6,6 +6,7 @@
 #define NEAT_ANN_HPP
 
 #include <deque>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <cstdlib>
@@ -13,12 +14,14 @@
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
+#include "Gene.h"
 
 
 class ANN {
     // topology
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
+    static std::vector<Gene> innovations;
 
     // pointer structures
     std::deque<Node*> inputNodes;

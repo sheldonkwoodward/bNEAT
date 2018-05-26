@@ -4,17 +4,24 @@
 
 #include "Gene.h"
 
-Gene::Gene(unsigned int from, unsigned int to) : Gene(from, to, true) {
-
-}
-
-Gene::Gene(unsigned int from, unsigned int to, bool enabled) : Gene(from, to, enabled, true) {
-
-}
-
-Gene::Gene(unsigned int from, unsigned int to, bool enabled, bool exist) {
+Gene::Gene(int from, int to, unsigned int innovation) {
     this->from = from;
     this->to = to;
-    this->enabled = enabled;
-    this->exist = exist;
+    this->innovation = innovation;
+}
+
+bool Gene::sort(Gene &gene1, Gene &gene2) {
+    return gene1.from > gene2.from || gene1.to > gene2.to;
+}
+
+bool Gene::operator==(const Gene &rhs) {
+    return from == rhs.from && to == rhs.to;
+}
+
+bool Gene::operator!=(const Gene &rhs) {
+    return from != rhs.from || to != rhs.to;
+}
+
+bool Gene::lessThan(const Gene &lhs, const Gene &rhs) {
+    return lhs.from < rhs.from || lhs.to < rhs.to;
 }

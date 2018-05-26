@@ -7,14 +7,15 @@
 
 
 struct Gene {
-    unsigned int from;
-    unsigned int to;
-    bool enabled;
-    bool exist;
+    int from;
+    int to;
+    unsigned int innovation;
 
-    Gene(unsigned int from, unsigned int to);
-    Gene(unsigned int from, unsigned int to, bool enabled);
-    Gene(unsigned int from, unsigned int to, bool enabled, bool exist);
+    Gene(int from, int to, unsigned int innovation);
+    static bool sort(Gene &gene1, Gene &gene2);
+    bool operator==(const Gene &rhs);
+    bool operator!=(const Gene &rhs);
+    static bool lessThan(const Gene &lhs, const Gene &rhs);
 };
 
 
