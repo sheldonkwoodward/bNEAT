@@ -240,7 +240,7 @@ void ANN::nodeMutation() {
 
     // gene 1
     auto newGene = Gene(randomConnection->getFrom()->getNodeNum(), nodes.back().getNodeNum(), 0);
-    auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::lessThan);
+    auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
     if (innovations.empty() || *match != newGene) {
         genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), innovations.size());
         innovations.emplace_back(randomConnection->getFrom()->getNodeNum(), nodes.back().getNodeNum(), innovations.size());
@@ -253,7 +253,7 @@ void ANN::nodeMutation() {
 
     // gene 2
     newGene = Gene(nodes.back().getNodeNum(), randomConnection->getTo()->getNodeNum(), 0);
-    match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::lessThan);
+    match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
     if (innovations.empty() || *match != newGene) {
         genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), innovations.size());
         innovations.emplace_back(nodes.back().getNodeNum(), randomConnection->getTo()->getNodeNum(), innovations.size());
@@ -277,10 +277,9 @@ void ANN::connectionMutation() {
     }
     if (possibleConnections.empty()) return;
     auto connection = possibleConnections[rand() % possibleConnections.size()];
-    genome.emplace_back(connection.getFrom(), connection.getTo(), connection.getWeight());
 
     auto newGene = Gene(connection.getFrom()->getNodeNum(), connection.getTo()->getNodeNum(), 0);
-    auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::lessThan);
+    auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
     if (innovations.empty() || *match != newGene) {
         genome.emplace_back(connection.getFrom(), connection.getTo(), randomWeight(), innovations.size());
         innovations.emplace_back(connection.getFrom()->getNodeNum(), connection.getTo()->getNodeNum(), innovations.size());
@@ -288,6 +287,8 @@ void ANN::connectionMutation() {
         genome.emplace_back(connection.getFrom(), connection.getTo(), randomWeight(), match->innovation);
     }
 
+    // sort and setup
+    std::sort(innovations.begin(), innovations.end(), Gene::sort);
     setup();
 }
 

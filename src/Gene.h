@@ -12,10 +12,9 @@ struct Gene {
     unsigned int innovation;
 
     Gene(int from, int to, unsigned int innovation);
-    static bool sort(Gene &gene1, Gene &gene2);
+    static bool sort(const Gene &lhs, const Gene &rhs);
     bool operator==(const Gene &rhs);
     bool operator!=(const Gene &rhs);
-    static bool lessThan(const Gene &lhs, const Gene &rhs);
 };
 
 
