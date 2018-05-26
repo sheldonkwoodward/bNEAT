@@ -2,6 +2,7 @@ import re
 from pprint import pprint
 from blessings import Terminal
 from time import sleep
+import sys
 
 t = Terminal()
 
@@ -33,7 +34,9 @@ def parse_locations(coords, scene):
 
 
 def main():
-    with open(input("Filename: ")) as f:
+    file = sys.argv[1]
+    print(file)
+    with open(file) as f:
         training_sessions = re.findall(
             r"(Board.*?)###", f.read(), flags=re.S | re.M)
         pprint(training_sessions)
@@ -54,3 +57,6 @@ def main():
                     print(t.clear)
                     print_scene(iteration)
                     sleep(.1)
+
+
+main()
