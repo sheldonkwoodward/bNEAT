@@ -1,9 +1,0 @@
-setup.py
-pythonParser/__init__.py
-pythonParser/pythonParser.py
-pythonParser.egg-info/PKG-INFO
-pythonParser.egg-info/SOURCES.txt
-pythonParser.egg-info/dependency_links.txt
-pythonParser.egg-info/entry_points.txt
-pythonParser.egg-info/requires.txt
-pythonParser.egg-info/top_level.txt
