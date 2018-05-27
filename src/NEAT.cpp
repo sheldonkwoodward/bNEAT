@@ -17,7 +17,7 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
     ANN ann1 = ANN(3, 1, "AAA");
     ANN ann2 = ANN(3, 1, "AAA");
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         ann1.connectionMutation();
         ann2.connectionMutation();
         ann1.nodeMutation();
@@ -36,8 +36,7 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
         std::cout << o << " ";
     }
     std::cout << std::endl;
-
-    ann3.dumpTopology("/Users/sheldonwoodward/Desktop/topology.txt");
+    ann3.dumpTopology("/Users/sheldonwoodward/Desktop/c-topology.txt");
 
     // TODO: mutation
     // TODO: survivor selection

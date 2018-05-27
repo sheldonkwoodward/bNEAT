@@ -43,6 +43,7 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
 
     // same fitness
     while (genomeItr1 != ann1.innovationSortedGenome.end() && genomeItr2 != ann2.innovationSortedGenome.end()) {
+        std::cout << (*genomeItr1)->getInnovation() << " | " << (*genomeItr1)->getFrom()->getNodeNum() << " > " << (*genomeItr1)->getTo()->getNodeNum() << " | " << (*genomeItr2)->getFrom()->getNodeNum() << " > " << (*genomeItr2)->getTo()->getNodeNum() << " | " << (*genomeItr2)->getInnovation() << std::endl;
         // matching innovation
         if ((*genomeItr1)->getInnovation() == (*genomeItr2)->getInnovation()) {
             // add connection to genome
@@ -90,33 +91,6 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                             (*genomeItr2)->getInnovation(),
                             (*genomeItr2)->getEnabled());
         ++genomeItr2;
-    }
-    std::cout << "P1 NODES" << std::endl;
-    for (auto node : ann1.nodes) {
-        std::cout << node.getNodeNum() << std::endl;
-    }
-    std::cout << "P1 ENABLED GENOME" << std::endl;
-    for (auto gene : ann1.genome) {
-        if (!gene.getEnabled()) continue;
-        std::cout << gene.getFrom()->getNodeNum() << "\t-> " << gene.getTo()->getNodeNum() << std::endl;
-    }
-    std::cout << "P2 NODES" << std::endl;
-    for (auto node : ann2.nodes) {
-        std::cout << node.getNodeNum() << std::endl;
-    }
-    std::cout << "P2 ENABLED GENOME" << std::endl;
-    for (auto gene : ann2.genome) {
-        if (!gene.getEnabled()) continue;
-        std::cout << gene.getFrom()->getNodeNum() << "\t-> " << gene.getTo()->getNodeNum() << std::endl;
-    }
-    std::cout << "C NODES" << std::endl;
-    for (auto node : nodes) {
-        std::cout << node.getNodeNum() << std::endl;
-    }
-    std::cout << "C ENABLED GENOME" << std::endl;
-    for (auto gene : genome) {
-        if (!gene.getEnabled()) continue;
-        std::cout << gene.getFrom()->getNodeNum() << "\t-> " << gene.getTo()->getNodeNum() << std::endl;
     }
     setup();
 }
@@ -198,10 +172,10 @@ void ANN::determineLayers(Node* node, unsigned int layer, std::deque<int> &stack
             if (recurrentConnection == stack.end()) {
                 determineLayers(cg->getFrom(), node->getLayer(), stack);
             } else {
-                std::cout << "RECURRENT " << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " | ";
-                for (auto s : stack) {
-                    std::cout << s << " ";
-                }
+//                std::cout << "RECURRENT " << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " | ";
+//                for (auto s : stack) {
+//                    std::cout << s << " ";
+//                }
                 std::cout << cg->getFrom()->getNodeNum() << std::endl;
                 --cg = genome.erase(cg);
             }
@@ -398,11 +372,12 @@ bool ANN::innovationExists(int innovation) {
 void ANN::dumpTopology(std::string file) {
     std::ofstream dumpFile;
     dumpFile.open(file);
-    for (auto node : sequentialSortedNodes) {
-        dumpFile << node->getNodeNum() << " " << node->getLayer() << "\n";
+    for (auto node : nodes) {
+        dumpFile << node.getNodeNum() << " " << node.getLayer() << "\n";
     }
     dumpFile << "###\n";
-    for (auto cg : enabledSortedGenome) {
-        dumpFile << cg->getFrom()->getNodeNum() << " " << cg->getTo()->getNodeNum() << " " << cg->getWeight() << "\n";
+    for (auto cg : genome) {
+        if (!cg.getEnabled()) continue;
+        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
     }
 }
