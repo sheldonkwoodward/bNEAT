@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 blessings = "*"
+networkx = "*"
+matplotlib = "*"
+pprint = "*"
 
 [dev-packages]
 
