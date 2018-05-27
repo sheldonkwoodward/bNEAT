@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <limits>
+#include <fstream>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -56,7 +57,7 @@ public:
     void sortNodes();
     void sortGenome();
     void determineLayers();
-    void determineLayers(Node* node, unsigned int layer);
+    void determineLayers(Node* node, unsigned int layer, std::deque<int> &stack);
     void determineWeightMatrix();
 
     // mutations
@@ -76,6 +77,7 @@ public:
     Node* findOrCreateNode(int node);
     bool connectionExists(Node* from, Node* to);
     bool innovationExists(int innovation);
+    void dumpTopology(std::string file);
 };
 
 

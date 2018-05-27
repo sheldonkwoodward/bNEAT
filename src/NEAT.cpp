@@ -24,15 +24,20 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
         ann2.nodeMutation();
     }
 
-//    ann1.setFitness(1.0f);
-//    ann2.setFitness(2.0f);
+//    auto o = ann1.compute(std::deque<float>(3, 1.0f));
+//    std::cout << o[0] << std::endl;
 
-//    ANN ann3 = ANN(ann1, ann2);
-//    std::cout << "OUTPUT" << std::endl;
-//    for (auto o : ann1.compute(std::deque<float>(3, 1.0f))) {
-//        std::cout << o << " ";
-//    }
-//    std::cout << std::endl;
+    ann1.setFitness(1.0f);
+    ann2.setFitness(2.0f);
+
+    ANN ann3 = ANN(ann1, ann2);
+    std::cout << "OUTPUT" << std::endl;
+    for (auto o : ann1.compute(std::deque<float>(3, 1.0f))) {
+        std::cout << o << " ";
+    }
+    std::cout << std::endl;
+
+    ann3.dumpTopology("/Users/sheldonwoodward/Desktop/topology.txt");
 
     // TODO: mutation
     // TODO: survivor selection
