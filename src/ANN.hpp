@@ -78,6 +78,7 @@ public:
     bool connectionExists(Node* from, Node* to);
     bool innovationExists(int innovation);
     void dumpTopology(std::string file);
+    void printGenome();
 };
 
 

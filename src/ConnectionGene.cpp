@@ -42,11 +42,11 @@ bool ConnectionGene::layerSort(ConnectionGene *cg1, ConnectionGene *cg2) {
 }
 
 bool ConnectionGene::innovationSort(ConnectionGene &cg1, ConnectionGene &cg2) {
-    return cg1.getInnovation() > cg2.getInnovation();
+    return cg1.getInnovation() < cg2.getInnovation();
 }
 
 bool ConnectionGene::innovationSortPtr(ConnectionGene *cg1, ConnectionGene *cg2) {
-    return cg1->getInnovation() > cg2->getInnovation();
+    return cg1->getInnovation() < cg2->getInnovation();
 }
 
 Node *ConnectionGene::getFrom() {

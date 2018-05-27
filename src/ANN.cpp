@@ -43,7 +43,6 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
 
     // same fitness
     while (genomeItr1 != ann1.innovationSortedGenome.end() && genomeItr2 != ann2.innovationSortedGenome.end()) {
-        std::cout << (*genomeItr1)->getInnovation() << " | " << (*genomeItr1)->getFrom()->getNodeNum() << " > " << (*genomeItr1)->getTo()->getNodeNum() << " | " << (*genomeItr2)->getFrom()->getNodeNum() << " > " << (*genomeItr2)->getTo()->getNodeNum() << " | " << (*genomeItr2)->getInnovation() << std::endl;
         // matching innovation
         if ((*genomeItr1)->getInnovation() == (*genomeItr2)->getInnovation()) {
             // add connection to genome
@@ -172,12 +171,8 @@ void ANN::determineLayers(Node* node, unsigned int layer, std::deque<int> &stack
             if (recurrentConnection == stack.end()) {
                 determineLayers(cg->getFrom(), node->getLayer(), stack);
             } else {
-//                std::cout << "RECURRENT " << cg->getFrom()->getNodeNum() << " -> " << cg->getTo()->getNodeNum() << " | ";
-//                for (auto s : stack) {
-//                    std::cout << s << " ";
-//                }
-                std::cout << cg->getFrom()->getNodeNum() << std::endl;
-                --cg = genome.erase(cg);
+                // TODO: look into better way of removing recurrence
+                cg->setEnabled(false);
             }
         }
     }
@@ -379,5 +374,22 @@ void ANN::dumpTopology(std::string file) {
     for (auto cg : genome) {
         if (!cg.getEnabled()) continue;
         dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
+    }
+}
+
+void ANN::printGenome() {
+    std::cout << "GENOME" << std::endl;
+    for (auto &gene : genome) {
+        if (!gene.getEnabled()) {
+            std::cout << "D ";
+        } else {
+            std::cout << "  ";
+        }
+        std::cout << gene.getFrom()->getNodeNum()
+                  << " -> "
+                  << gene.getTo()->getNodeNum()
+                  << " "
+                  << gene.getWeight()
+                  << std::endl;
     }
 }
