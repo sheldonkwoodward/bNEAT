@@ -5,6 +5,9 @@
 #include <algorithm>
 #include "ANN.hpp"
 
+// static initialization
+std::vector<Gene> ANN::innovations = std::vector<Gene>();
+
 // constructor
 ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     this->nodes = std::deque<Node>();
@@ -37,6 +40,7 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     setup();
 }
 
+// crossover
 ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.size(), "") {
     auto genomeItr1 = ann1.innovationSortedGenome.begin();
     auto genomeItr2 = ann2.innovationSortedGenome.begin();
@@ -94,7 +98,15 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
     setup();
 }
 
-std::vector<Gene> ANN::innovations = std::vector<Gene>();
+Node* ANN::findOrCreateNode(int node) {
+    for (int n = 0; n < nodes.size(); n++) {
+        if (nodes[n].getNodeNum() == node) {
+            return &nodes.at((unsigned long)n);
+        }
+    }
+    nodes.emplace_back(node);
+    return &nodes.back();
+}
 
 // set get
 std::string ANN::getSpecies() {
@@ -111,8 +123,8 @@ void ANN::setFitness(float fitness) {
 
 // setup functions
 void ANN::setup() {
-    sortNodes();
     determineLayers();
+    sortNodes();
     sortGenome();
     determineWeightMatrix();
 }
@@ -234,6 +246,7 @@ void ANN::weightMutation() {
 }
 
 void ANN::nodeMutation() {
+//    printGenome();
     if (genome.empty()) return;
     // find random connections
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
@@ -341,16 +354,6 @@ float ANN::randomWeight() {
     return (float)(rand() % 2000 - 1000) / 1000.0f;
 }
 
-Node* ANN::findOrCreateNode(int node) {
-    for (int n = 0; n < nodes.size(); n++) {
-        if (nodes[n].getNodeNum() == node) {
-            return &nodes.at((unsigned long)n);
-        }
-    }
-    nodes.emplace_back(node);
-    return &nodes.back();
-}
-
 bool ANN::connectionExists(Node* from, Node* to) {
     for (auto &cg : genome)
         if (cg.getFrom() == from && cg.getTo() == to) return true;
@@ -374,6 +377,13 @@ void ANN::dumpTopology(std::string file) {
     for (auto cg : genome) {
         if (!cg.getEnabled()) continue;
         dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
+    }
+}
+
+void ANN::printNodes() {
+    std::cout << "NODES" << std::endl;
+    for (auto &node : nodes) {
+        std::cout << node.getNodeNum() << " " << node.getLayer() << std::endl;
     }
 }
 

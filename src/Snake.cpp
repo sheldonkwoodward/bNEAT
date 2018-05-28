@@ -19,7 +19,7 @@ int Snake::fitness(ANN &agent, bool record) {
     snake.push_front(std::pair(width / 2, (height / 2) - 1));
     std::deque<float> input(width * height, 0);
     std::deque<float> output;
-    food = std::experimental::nullopt;
+    food = std::nullopt;
     int time = -1;
 
     do {
@@ -56,7 +56,7 @@ int Snake::fitness(ANN &agent, bool record) {
 
         // Did the snake eat
         if (snake.front() == food) {
-            food = std::experimental::nullopt;
+            food = std::nullopt;
         } else {
             snake.pop_back();
         }

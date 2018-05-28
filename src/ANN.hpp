@@ -45,7 +45,10 @@ class ANN {
 public:
     // constructor
     ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
+
+    // crossover
     ANN(ANN &ann1, ANN &ann2);
+    Node* findOrCreateNode(int node);
 
     // set get
     std::string getSpecies();
@@ -74,10 +77,10 @@ public:
 
     // other
     float randomWeight();
-    Node* findOrCreateNode(int node);
     bool connectionExists(Node* from, Node* to);
     bool innovationExists(int innovation);
     void dumpTopology(std::string file);
+    void printNodes();
     void printGenome();
 };
 
