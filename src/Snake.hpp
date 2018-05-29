@@ -28,7 +28,7 @@ class Snake {
 public:
     Snake(int sizeX, int sizeY);
 
-    int fitness(ANN agent, bool record);
+    int fitness(ANN &agent, bool record);
 
 };
 

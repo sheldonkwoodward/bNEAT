@@ -5,6 +5,8 @@
 #ifndef NEAT_CONNECTIONGENE_HPP
 #define NEAT_CONNECTIONGENE_HPP
 
+#include <deque>
+
 #include "Node.hpp"
 
 
@@ -21,9 +23,12 @@ public:
     // constructor
     ConnectionGene(Node* from, Node* to, float weight);
     ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation);
+    ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation, bool enabled);
 
     // sort
     static bool layerSort(ConnectionGene *cg1, ConnectionGene *cg2);
+    static bool innovationSort(ConnectionGene &cg1, ConnectionGene &cg2);
+    static bool innovationSortPtr(ConnectionGene* cg1, ConnectionGene* cg2);
 
     // get set
     Node* getFrom();
@@ -36,6 +41,7 @@ public:
     void setInnovation(int innovation);
     unsigned int getLayer();
     void setLayer(unsigned int layer);
+    static unsigned int getInnovationCount();
 };
 
 
