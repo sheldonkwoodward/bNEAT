@@ -18,7 +18,7 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
         anns.emplace_back(100, 4, "");
         anns.back().setFitness((float)(rand() % 10));
     }
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 3000; i++) {
         anns.push_back(crossover(anns[rand() % anns.size()], anns[rand() % anns.size()], mutationRate));
         anns.back().setFitness((float)(rand() % 10));
         anns.pop_front();

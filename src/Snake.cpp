@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include "Snake.hpp"
 
 Snake::Snake(int sizeX, int sizeY) {
@@ -22,17 +23,39 @@ int Snake::fitness(ANN &agent, bool record) {
     food = std::nullopt;
     int time = -1;
 
+    // record begin
+    if (record) {
+        std::ofstream logFile;
+        logFile.open("logFile.txt", std::ios::app);
+        logFile << "Board: " << width << "," << height << std::endl;
+        logFile.close();
+    }
+
     do {
         time += 1;
         if (!food) {
             generateFood();
         }
 
-        std::cout << "food: " << food->first <<", " << food->second << std::endl;
+        std::cout << "food: " << food.value().first << ", " << food.value().second << std::endl;
         for (auto it : snake) {
-            std::cout << "snake: " << it.first <<  ", " << it.second << std::endl;
+            std::cout << "snake: " << it.first << ", " << it.second << std::endl;
         }
+
+        // record body
+        if (record) {
+            std::ofstream logFile;
+            logFile.open("logFile.txt", std::ios::app);
+            logFile << food.value().first << "," << food.value().second << std::endl;
+            for (auto it : snake) {
+                logFile << it.first << "," << it.second << std::endl;
+            }
+            logFile << "@@@" << std::endl;
+            logFile.close();
+        }
+
         parseInput(input);
+
         output = agent.compute(input);
 //        for (auto it : output) {
 //            std::cout << it << std::endl;
@@ -63,13 +86,20 @@ int Snake::fitness(ANN &agent, bool record) {
 
 
     } while (!gameOver(time));
+    //Log end
+    if (record) {
+        std::ofstream logFile;
+        logFile.open("logFile.txt", std::ios::app);
+        logFile << "###\n";
+        logFile.close();
+    }
 
     return snake.size() - 2;
 }
 
 
 bool Snake::gameOver(int time) {
-    if (time == timeOut){
+    if (time == timeOut) {
         return true;
     }
     if (snake.front().first > width || snake.front().first < 0 || snake.front().second > height ||
