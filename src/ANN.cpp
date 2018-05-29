@@ -2,7 +2,6 @@
 // Created by Sheldon Woodward on 4/27/18.
 //
 
-#include <algorithm>
 #include "ANN.hpp"
 
 // static initialization
@@ -45,21 +44,34 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
     auto genomeItr1 = ann1.innovationSortedGenome.begin();
     auto genomeItr2 = ann2.innovationSortedGenome.begin();
 
-    // same fitness
+    // determine them most fit ANN
+    ANN* moreFit = &ann1;
+    ANN* lessFit = &ann2;
+    if (moreFit->fitness < lessFit->fitness) std::swap(moreFit, lessFit);
+
+    // non-excess genes
     while (genomeItr1 != ann1.innovationSortedGenome.end() && genomeItr2 != ann2.innovationSortedGenome.end()) {
         // matching innovation
         if ((*genomeItr1)->getInnovation() == (*genomeItr2)->getInnovation()) {
+            // choose connection to inherit
+            auto randomGeneItr = genomeItr1;
+            if (ann1.fitness == ann2.fitness) {
+                if (rand() % 2) randomGeneItr = genomeItr1;
+                else randomGeneItr = genomeItr2;
+            } else if (ann1.fitness < ann2.fitness) {
+                randomGeneItr = genomeItr2;
+            }
             // add connection to genome
-            genome.emplace_back(findOrCreateNode((*genomeItr1)->getFrom()->getNodeNum()),
-                                findOrCreateNode((*genomeItr1)->getTo()->getNodeNum()),
-                                (*genomeItr1)->getWeight(),
-                                (*genomeItr1)->getInnovation(),
-                                (*genomeItr1)->getEnabled());
+            genome.emplace_back(findOrCreateNode((*randomGeneItr)->getFrom()->getNodeNum()),
+                                findOrCreateNode((*randomGeneItr)->getTo()->getNodeNum()),
+                                (*randomGeneItr)->getWeight(),
+                                (*randomGeneItr)->getInnovation(),
+                                (*randomGeneItr)->getEnabled());
             // increment both iterators
             if (genomeItr1 != ann1.innovationSortedGenome.end()) ++genomeItr1;
             if (genomeItr2 != ann2.innovationSortedGenome.end()) ++genomeItr2;
         }
-        // disjoint or excess innovation
+        // disjoint innovation
         else {
             // determine ptr with smallest innovation
             auto smallerGenomePtr = &genomeItr1;
@@ -68,18 +80,21 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                 smallerGenomePtr = &genomeItr2;
                 smallerAnn = &ann2;
             }
-            // add smaller innovation to genome
-            genome.emplace_back(findOrCreateNode((**smallerGenomePtr)->getFrom()->getNodeNum()),
-                                findOrCreateNode((**smallerGenomePtr)->getTo()->getNodeNum()),
-                                (**smallerGenomePtr)->getWeight(),
-                                (**smallerGenomePtr)->getInnovation(),
-                                (**smallerGenomePtr)->getEnabled());
+            // try skip if unequal fitness
+            if (ann1.fitness == ann2.fitness || smallerAnn == moreFit) {
+                // add smaller innovation to genome
+                genome.emplace_back(findOrCreateNode((**smallerGenomePtr)->getFrom()->getNodeNum()),
+                                    findOrCreateNode((**smallerGenomePtr)->getTo()->getNodeNum()),
+                                    (**smallerGenomePtr)->getWeight(),
+                                    (**smallerGenomePtr)->getInnovation(),
+                                    (**smallerGenomePtr)->getEnabled());
+            }
             // increment iterator with smallest innovation
             if(*smallerGenomePtr != smallerAnn->innovationSortedGenome.end()) ++(*smallerGenomePtr);
         }
     }
     // excess genes
-    while (genomeItr1 != ann1.innovationSortedGenome.end()) {
+    while (ann1.fitness >= ann2.fitness && genomeItr1 != ann1.innovationSortedGenome.end()) {
         genome.emplace_back(findOrCreateNode((*genomeItr1)->getFrom()->getNodeNum()),
                             findOrCreateNode((*genomeItr1)->getTo()->getNodeNum()),
                             (*genomeItr1)->getWeight(),
@@ -87,7 +102,7 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                             (*genomeItr1)->getEnabled());
         ++genomeItr1;
     }
-    while (genomeItr2 != ann2.innovationSortedGenome.end()) {
+    while (ann2.fitness >= ann1.fitness && genomeItr2 != ann2.innovationSortedGenome.end()) {
         genome.emplace_back(findOrCreateNode((*genomeItr2)->getFrom()->getNodeNum()),
                             findOrCreateNode((*genomeItr2)->getTo()->getNodeNum()),
                             (*genomeItr2)->getWeight(),
@@ -388,18 +403,26 @@ void ANN::printNodes() {
 }
 
 void ANN::printGenome() {
+    printGenome(false);
+}
+
+void ANN::printGenome(bool showDisabled) {
     std::cout << "GENOME" << std::endl;
     for (auto &gene : genome) {
-        if (!gene.getEnabled()) {
-            std::cout << "D ";
-        } else {
-            std::cout << "  ";
+        if (showDisabled || gene.getEnabled()) {
+            if (showDisabled && !gene.getEnabled()) {
+                std::cout << "D ";
+            } else {
+                std::cout << "  ";
+            }
+            std::cout << gene.getFrom()->getNodeNum()
+                      << " -> "
+                      << gene.getTo()->getNodeNum()
+                      << "\t"
+                      << gene.getInnovation()
+                      << "\t"
+                      << gene.getWeight()
+                      << std::endl;
         }
-        std::cout << gene.getFrom()->getNodeNum()
-                  << " -> "
-                  << gene.getTo()->getNodeNum()
-                  << " "
-                  << gene.getWeight()
-                  << std::endl;
     }
 }

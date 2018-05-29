@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <limits>
 #include <fstream>
+#include <algorithm>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -82,6 +83,7 @@ public:
     void dumpTopology(std::string file);
     void printNodes();
     void printGenome();
+    void printGenome(bool showDisabled);
 };
 
 

@@ -13,65 +13,42 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
     // TODO: populate
     // TODO: parent selection
     // TODO: crossover
+//    std::deque<ANN> anns = std::deque<ANN>();
+//    for (int i = 0; i < 30; i++) {
+//        anns.emplace_back(3, 1, "");
+//        anns.back().setFitness((float)(rand() % 3));
+//    }
+//    for (int i = 0; i < 500; i++) {
+//        unsigned long someRand = rand() % anns.size();
+//        anns[someRand] = ANN(anns[rand() % anns.size()], anns[rand() % anns.size()]);
+//        anns[someRand].connectionMutation();
+//        anns[someRand].nodeMutation();
+//        anns[someRand].setFitness((float)(rand() % 3));
+//        if (i % 100 == 0) std::cout << i << std::endl;
+//    }
+//
+//    anns[rand() % anns.size()].printNodes();
 
-    ANN ann1 = ANN(3, 1, "AAA");
-    ANN ann2 = ANN(3, 1, "AAA");
-    ANN ann3 = ANN(3, 1, "AAA");
+    ANN ann1 = ANN(3, 1, "");
+    ANN ann2 = ANN(3, 1, "");
 
-    ANN ann4 = ANN(3, 1, "AAA");
-    ANN ann5 = ANN(3, 1, "AAA");
-    ANN ann6 = ANN(3, 1, "AAA");
-
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0 ; i < 5; i++) {
         ann1.connectionMutation();
-        ann2.connectionMutation();
-        ann3.connectionMutation();
-
         ann1.nodeMutation();
+    }
+    for (int i = 0 ; i < 5; i++) {
+        ann2.connectionMutation();
         ann2.nodeMutation();
-        ann3.nodeMutation();
-
-        ann1.setFitness(1.0f);
-        ann2.setFitness(1.0f);
-        ann3.setFitness(1.0f);
-
-        ann1 = ANN(ann2, ann3);
-        ann2 = ANN(ann1, ann3);
-        ann3 = ANN(ann1, ann2);
     }
 
-    for (int i = 0; i < 20; i++) {
-        ann4.connectionMutation();
-        ann5.connectionMutation();
-        ann6.connectionMutation();
+    ann1.setFitness(2.0f);
+    ann2.setFitness(3.0f);
 
-        ann4.nodeMutation();
-        ann5.nodeMutation();
-        ann6.nodeMutation();
+    ANN ann3 = ANN(ann1, ann2);
 
-        ann4.setFitness(1.0f);
-        ann5.setFitness(1.0f);
-        ann6.setFitness(1.0f);
-
-        ann4 = ANN(ann5, ann6);
-        ann5 = ANN(ann4, ann6);
-        ann6 = ANN(ann4, ann5);
-    }
-
-    ANN ann = ANN(ann3, ann6);
-
-    ann3.printNodes();
-    ann3.printGenome();
-    ann6.printNodes();
-    ann6.printGenome();
-    ann.printNodes();
-    ann.printGenome();
-
-    std::cout << "COMPUTE" << std::endl;
-    for (auto &o : ann.compute(std::deque<float>(3, 1.0f))) {
-        std::cout << o << " ";
-    }
-    std::cout << std::endl;
+    ann1.printGenome(true);
+    ann2.printGenome(true);
+    ann3.printGenome(true);
 
     // TODO: mutation
     // TODO: survivor selection
