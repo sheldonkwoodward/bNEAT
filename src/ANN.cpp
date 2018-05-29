@@ -310,13 +310,12 @@ void ANN::connectionMutation() {
 //    auto connection = possibleConnections[rand() % possibleConnections.size()];
 
     // find random connection
-    unsigned long ssize = layerSortedNodes.size();
     unsigned long randFrom;
     unsigned long randTo;
     do {
         randFrom = rand() % (layerSortedNodes.size() - 1);
         randTo = rand() % (layerSortedNodes.size() - randFrom - 1) + randFrom + 1;
-    } while(connectionExists(layerSortedNodes[randFrom], layerSortedNodes[randTo]));
+    } while(layerSortedNodes[randFrom]->getLayer() == layerSortedNodes[randTo]->getLayer() || connectionExists(layerSortedNodes[randFrom], layerSortedNodes[randTo]) );
     Gene newGene = Gene(layerSortedNodes[randFrom]->getNodeNum(), layerSortedNodes[randFrom]->getNodeNum(), 0);
 
     // add to genome

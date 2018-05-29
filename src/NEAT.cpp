@@ -15,7 +15,7 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
     // TODO: crossover
     std::deque<ANN> anns = std::deque<ANN>();
     for (int i = 0; i < 100; i++) {
-        anns.emplace_back(3, 1, "");
+        anns.emplace_back(100, 4, "");
         anns.back().setFitness((float)(rand() % 10));
     }
     for (int i = 0; i < 10000; i++) {
@@ -25,7 +25,8 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
         if (i % 100 == 0) std::cout << i << std::endl;
     }
     anns.back().printGenome();
-    std::cout << anns.back().compute(std::deque<float>(3, 1.0f))[0] << std::endl;
+    std::cout << "OUTPUTS" << std::endl;
+    for (auto &o : anns.back().compute(std::deque<float>(100, 1.0f))) std::cout << o << std::endl;
 
     // TODO: mutation
     // TODO: survivor selection
