@@ -13,43 +13,28 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
     // TODO: populate
     // TODO: parent selection
     // TODO: crossover
-//    std::deque<ANN> anns = std::deque<ANN>();
-//    for (int i = 0; i < 30; i++) {
-//        anns.emplace_back(3, 1, "");
-//        anns.back().setFitness((float)(rand() % 3));
-//    }
-//    for (int i = 0; i < 500; i++) {
-//        unsigned long someRand = rand() % anns.size();
-//        anns[someRand] = ANN(anns[rand() % anns.size()], anns[rand() % anns.size()]);
-//        anns[someRand].connectionMutation();
-//        anns[someRand].nodeMutation();
-//        anns[someRand].setFitness((float)(rand() % 3));
-//        if (i % 100 == 0) std::cout << i << std::endl;
-//    }
-//
-//    anns[rand() % anns.size()].printNodes();
-
-    ANN ann1 = ANN(3, 1, "");
-    ANN ann2 = ANN(3, 1, "");
-
-    for (int i = 0 ; i < 5; i++) {
-        ann1.connectionMutation();
-        ann1.nodeMutation();
+    std::deque<ANN> anns = std::deque<ANN>();
+    for (int i = 0; i < 100; i++) {
+        anns.emplace_back(3, 1, "");
+        anns.back().setFitness((float)(rand() % 10));
     }
-    for (int i = 0 ; i < 5; i++) {
-        ann2.connectionMutation();
-        ann2.nodeMutation();
+    for (int i = 0; i < 10000; i++) {
+        anns.push_back(crossover(anns[rand() % anns.size()], anns[rand() % anns.size()], mutationRate));
+        anns.back().setFitness((float)(rand() % 10));
+        anns.pop_front();
+        if (i % 100 == 0) std::cout << i << std::endl;
     }
-
-    ann1.setFitness(2.0f);
-    ann2.setFitness(3.0f);
-
-    ANN ann3 = ANN(ann1, ann2);
-
-    ann1.printGenome(true);
-    ann2.printGenome(true);
-    ann3.printGenome(true);
+    anns.back().printGenome();
+    std::cout << anns.back().compute(std::deque<float>(3, 1.0f))[0] << std::endl;
 
     // TODO: mutation
     // TODO: survivor selection
+}
+
+ANN NEAT::crossover(ANN &ann1, ANN &ann2, float mutationRate) {
+    ANN newANN = ANN(ann1, ann2);
+    if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.weightMutation();
+    if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.connectionMutation();
+    if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.nodeMutation();
+    return newANN;
 }

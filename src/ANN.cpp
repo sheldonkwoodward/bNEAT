@@ -220,6 +220,7 @@ void ANN::determineWeightMatrix() {
 
 // mutations
 void ANN::weightMutation() {
+    if (genome.empty()) return;
     ConnectionGene* randomConnection = &genome.at(rand() % genome.size());
     static const int OPERATION_NUM = 5;
     int operation = rand() % OPERATION_NUM;
@@ -261,7 +262,6 @@ void ANN::weightMutation() {
 }
 
 void ANN::nodeMutation() {
-//    printGenome();
     if (genome.empty()) return;
     // find random connections
     ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
@@ -298,24 +298,34 @@ void ANN::nodeMutation() {
 }
 
 void ANN::connectionMutation() {
-    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
-    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
-        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
-            if (nodes[n0].getLayer() > nodes[n1].getLayer() && !connectionExists(&nodes.at(n0), &nodes.at(n1))) {
-                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
-            }
-        }
-    }
-    if (possibleConnections.empty()) return;
-    auto connection = possibleConnections[rand() % possibleConnections.size()];
+//    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
+//    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
+//        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
+//            if (nodes[n0].getLayer() > nodes[n1].getLayer() && !connectionExists(&nodes.at(n0), &nodes.at(n1))) {
+//                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
+//            }
+//        }
+//    }
+//    if (possibleConnections.empty()) return;
+//    auto connection = possibleConnections[rand() % possibleConnections.size()];
 
-    auto newGene = Gene(connection.getFrom()->getNodeNum(), connection.getTo()->getNodeNum(), 0);
+    // find random connection
+    unsigned long ssize = layerSortedNodes.size();
+    unsigned long randFrom;
+    unsigned long randTo;
+    do {
+        randFrom = rand() % (layerSortedNodes.size() - 1);
+        randTo = rand() % (layerSortedNodes.size() - randFrom - 1) + randFrom + 1;
+    } while(connectionExists(layerSortedNodes[randFrom], layerSortedNodes[randTo]));
+    Gene newGene = Gene(layerSortedNodes[randFrom]->getNodeNum(), layerSortedNodes[randFrom]->getNodeNum(), 0);
+
+    // add to genome
     auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
     if (innovations.empty() || *match != newGene) {
-        genome.emplace_back(connection.getFrom(), connection.getTo(), randomWeight(), innovations.size());
-        innovations.emplace_back(connection.getFrom()->getNodeNum(), connection.getTo()->getNodeNum(), innovations.size());
+        genome.emplace_back(layerSortedNodes[randFrom], layerSortedNodes[randTo], randomWeight(), innovations.size());
+        innovations.emplace_back(newGene.from, newGene.to, innovations.size());
     } else {
-        genome.emplace_back(connection.getFrom(), connection.getTo(), randomWeight(), match->innovation);
+        genome.emplace_back(layerSortedNodes[randFrom], layerSortedNodes[randTo], randomWeight(), match->innovation);
     }
 
     // sort and setup
@@ -370,6 +380,7 @@ float ANN::randomWeight() {
 }
 
 bool ANN::connectionExists(Node* from, Node* to) {
+    // TODO: binary search
     for (auto &cg : genome)
         if (cg.getFrom() == from && cg.getTo() == to) return true;
     return false;
