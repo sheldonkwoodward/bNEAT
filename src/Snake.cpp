@@ -13,6 +13,13 @@ Snake::Snake(int sizeX, int sizeY) {
     height = sizeY;
 }
 
+int Snake::getWidth() {
+    return width;
+}
+
+int Snake::getHeight() {
+    return height;
+}
 
 int Snake::fitness(ANN &agent, bool record) {
     snake = std::deque<std::pair<int, int>>();
@@ -37,9 +44,9 @@ int Snake::fitness(ANN &agent, bool record) {
             generateFood();
         }
 
-        std::cout << "food: " << food.value().first << ", " << food.value().second << std::endl;
+//        std::cout << "food: " << food.value().first << ", " << food.value().second << std::endl;
         for (auto it : snake) {
-            std::cout << "snake: " << it.first << ", " << it.second << std::endl;
+//            std::cout << "snake: " << it.first << ", " << it.second << std::endl;
         }
 
         // record body
@@ -61,7 +68,7 @@ int Snake::fitness(ANN &agent, bool record) {
 //            std::cout << it << std::endl;
 //        }
 
-        std::cout << std::endl;
+//        std::cout << std::endl;
         switch (validMove(output)) {
             case 0:
                 snake.push_front(std::pair(snake[0].first - 1, snake[0].second));
@@ -181,4 +188,3 @@ void Snake::generateFood() {
 
     food = testFood;
 }
-

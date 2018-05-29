@@ -26,6 +26,7 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     this->species = std::move(species);
     this->layerCount = 1;
     this->fitness = 0.0f;
+    this->age = 0;
 
     // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
@@ -134,6 +135,14 @@ float ANN::getFitness() {
 
 void ANN::setFitness(float fitness) {
     this->fitness = fitness;
+}
+
+unsigned int ANN::getAge() {
+    return age;
+}
+
+void ANN::incrementAge() {
+    age++;
 }
 
 // setup functions

@@ -42,6 +42,7 @@ class ANN {
     std::string species;
     unsigned int layerCount;
     float fitness;
+    unsigned int age;
 
 public:
     // constructor
@@ -55,6 +56,8 @@ public:
     std::string getSpecies();
     float getFitness();
     void setFitness(float fitness);
+    unsigned int getAge();
+    void incrementAge();
 
     // setup
     void setup();

@@ -28,6 +28,10 @@ class Snake {
 public:
     Snake(int sizeX, int sizeY);
 
+    int getWidth();
+
+    int getHeight();
+
     int fitness(ANN &agent, bool record);
 
 };
