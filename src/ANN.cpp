@@ -269,27 +269,26 @@ void ANN::nodeMutation() {
     // TODO: ensure nodeNum doesn't already exist
     nodes.emplace_back((int)nodes.size());
 
+    // new genes
+    auto newGene1 = Gene(randomConnection->getFrom()->getNodeNum(), nodes.back().getNodeNum(), 0);
+    auto match1 = std::lower_bound(innovations.begin(), innovations.end(), newGene1, Gene::sort);
+    auto newGene2 = Gene(nodes.back().getNodeNum(), randomConnection->getTo()->getNodeNum(), 0);
+    auto match2 = std::lower_bound(innovations.begin(), innovations.end(), newGene2, Gene::sort);
+
     // gene 1
-    auto newGene = Gene(randomConnection->getFrom()->getNodeNum(), nodes.back().getNodeNum(), 0);
-    auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
-    if (innovations.empty() || *match != newGene) {
+    if (innovations.empty() || *match1 != newGene1) {
         genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), innovations.size());
         innovations.emplace_back(randomConnection->getFrom()->getNodeNum(), nodes.back().getNodeNum(), innovations.size());
     } else {
-        genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), match->innovation);
+        genome.emplace_back(randomConnection->getFrom(), &nodes.back(), randomWeight(), match1->innovation);
     }
-    // TODO: implement with only one sort
-    std::sort(innovations.begin(), innovations.end(), Gene::sort);
-
 
     // gene 2
-    newGene = Gene(nodes.back().getNodeNum(), randomConnection->getTo()->getNodeNum(), 0);
-    match = std::lower_bound(innovations.begin(), innovations.end(), newGene, Gene::sort);
-    if (innovations.empty() || *match != newGene) {
+    if (innovations.empty() || *match2 != newGene2) {
         genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), innovations.size());
         innovations.emplace_back(nodes.back().getNodeNum(), randomConnection->getTo()->getNodeNum(), innovations.size());
     } else {
-        genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), match->innovation);
+        genome.emplace_back(&nodes.back(), randomConnection->getTo(), randomWeight(), match2->innovation);
     }
 
     // sort and setup
@@ -298,17 +297,6 @@ void ANN::nodeMutation() {
 }
 
 void ANN::connectionMutation() {
-//    std::deque<ConnectionGene> possibleConnections = std::deque<ConnectionGene>();
-//    for (unsigned long n1 = 0; n1 < nodes.size(); n1++) {
-//        for (unsigned long n0 = 0; n0 < nodes.size(); n0++) {
-//            if (nodes[n0].getLayer() > nodes[n1].getLayer() && !connectionExists(&nodes.at(n0), &nodes.at(n1))) {
-//                possibleConnections.emplace_back(&nodes.at(n0), &nodes.at(n1), randomWeight(), 0);
-//            }
-//        }
-//    }
-//    if (possibleConnections.empty()) return;
-//    auto connection = possibleConnections[rand() % possibleConnections.size()];
-
     // find random connection
     unsigned long randFrom;
     unsigned long randTo;
@@ -382,13 +370,6 @@ bool ANN::connectionExists(Node* from, Node* to) {
     // TODO: binary search
     for (auto &cg : genome)
         if (cg.getFrom() == from && cg.getTo() == to) return true;
-    return false;
-}
-
-bool ANN::innovationExists(int innovation) {
-    for (auto &gene : genome) {
-        if (gene.getInnovation() == innovation) return true;
-    }
     return false;
 }
 
