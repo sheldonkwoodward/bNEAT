@@ -8,6 +8,7 @@ NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
     srand(seed);
     population = std::deque<ANN>();
     parents = std::deque<std::pair<ANN*, ANN*>>();
+    generationCount = 0;
 }
 
 void NEAT::train(float mutationRate, std::string fitness, std::string parentSelectionAlg, std::string survivorSelectionAlg) {
@@ -16,14 +17,22 @@ void NEAT::train(float mutationRate, std::string fitness, std::string parentSele
 
     // training
     populate(POPULATION_SIZE);
-
-    for (int i = 0; i < 1000; i++) {
-        parentSelection("");
+    int i = 0;
+    while(i > -1) {
+        parentSelection(parentSelectionAlg);
         crossover(mutationRate);
-        survivorSelection("");
-        std::cout << i << std::endl;
+        survivorSelection(survivorSelectionAlg);
+        if (i % 500 == 0) {
+            std::sort(population.begin(), population.end(), ANN::fitnessSort);
+            std::cout << "GENERATION " << i << " MAX FITNESS: " << population.back().getFitness() << std::endl;
+        }
+        if (i == 2000) {
+            std::sort(population.begin(), population.end(), ANN::fitnessSort);
+            population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps/dump-g" + std::to_string(i) + ".txt");
+            break;
+        }
+        i++;
     }
-    for (auto &ann : population) std::cout << ann.getFitness() << std::endl;
 
     // TODO: crossover and mutation
     // TODO: survivor selection
@@ -33,7 +42,8 @@ void NEAT::populate(unsigned int populationSize) {
     // initial population
     population.clear();
     for (int p = 0; p < populationSize; p++) {
-        population.emplace_back(100, 4, std::to_string(p));
+        // TODO: CHANGE ANN CREATION SIZE
+        population.emplace_back(25, 4, std::to_string(p));
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back(), false));
     }
@@ -53,7 +63,7 @@ void NEAT::parentSelection(std::string algorithm) {
             for (auto &ann : population) ann.connectionMutation();
         }
     }
-    for (int i = 0; i < population.size() / 2; i++) {
+    for (int i = 0; i < population.size() / 3; i++) {
         // wheel prep
         std::pair<ANN*, ANN*> newParents = std::pair<ANN*, ANN*>();
         int roulette1 = rand() % fitnessSum;
@@ -82,14 +92,17 @@ ANN NEAT::crossover(ANN &ann1, ANN &ann2, float mutationRate) {
     if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.weightMutation();
     if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.connectionMutation();
     if ((float)(rand() % 1000) / 1000.0f < mutationRate) newANN.nodeMutation();
-    newANN.setFitness(snake.fitness(newANN, false));
+    if (ann1.getFitness() >= 4 && ann2.getFitness() >= 4 && generationCount % 500 == 0) newANN.setFitness(snake.fitness(newANN, true));
+    else newANN.setFitness(snake.fitness(newANN, false));
     return newANN;
 }
 
 void NEAT::survivorSelection(std::string algorithm) {
     // TODO: other options than complete population replacement
+    std::sort(population.begin(), population.end(), ANN::fitnessSort);
     for (int i = 0; i < parents.size(); i++) {
         population.pop_front();
     }
     for (auto &ann : population) ann.incrementAge();
+    generationCount++;
 }

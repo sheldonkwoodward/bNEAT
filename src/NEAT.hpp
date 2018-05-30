@@ -16,6 +16,7 @@ class NEAT {
     Snake snake;
     std::deque<ANN> population;
     std::deque<std::pair<ANN*, ANN*>> parents;
+    unsigned int generationCount;
 
 public:
     NEAT(int sizeX, int sizeY, unsigned int seed);

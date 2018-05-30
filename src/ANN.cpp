@@ -145,6 +145,11 @@ void ANN::incrementAge() {
     age++;
 }
 
+// sort
+bool ANN::fitnessSort(ANN &ann1, ANN &ann2) {
+        return ann1.fitness < ann2.fitness;
+}
+
 // setup functions
 void ANN::setup() {
     determineLayers();

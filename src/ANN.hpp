@@ -59,6 +59,9 @@ public:
     unsigned int getAge();
     void incrementAge();
 
+    // sort
+    static bool fitnessSort(ANN &ann1, ANN &ann2);
+
     // setup
     void setup();
     void sortNodes();

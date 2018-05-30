@@ -56,7 +56,7 @@ def main():
                     print_scene(iteration)
                     print(t.clear)
                     print_scene(iteration)
-                    sleep(.1)
+                    sleep(1)
 
 
 main()

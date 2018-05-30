@@ -109,7 +109,7 @@ bool Snake::gameOver(int time) {
     if (time == timeOut) {
         return true;
     }
-    if (snake.front().first > width || snake.front().first < 0 || snake.front().second > height ||
+    if (snake.front().first >= width || snake.front().first < 0 || snake.front().second >= height ||
         snake.front().second < 0) {
         return true;
     }

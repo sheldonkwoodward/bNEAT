@@ -3,8 +3,8 @@
 
 
 int main() {
-    NEAT neat = NEAT(10, 10, 123);
-    neat.train(0.05f, "", "", "");
+    NEAT neat = NEAT(5, 5, 123);
+    neat.train(0.1f, "", "", "");
 
     return 0;
 }
