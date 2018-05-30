@@ -13,6 +13,7 @@
 #include <limits>
 #include <fstream>
 #include <algorithm>
+#include <cmath>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -43,9 +44,11 @@ class ANN {
     unsigned int layerCount;
     float fitness;
     unsigned int age;
+    float compatibility;
 
 public:
     // constructor
+    ANN(unsigned long inputNum, unsigned long outputNum);
     ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
 
     // crossover

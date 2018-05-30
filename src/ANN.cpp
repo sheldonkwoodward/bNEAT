@@ -8,6 +8,10 @@
 std::vector<Gene> ANN::innovations = std::vector<Gene>();
 
 // constructor
+ANN::ANN(unsigned long inputNum, unsigned long outputNum) : ANN(inputNum, outputNum, "NONE") {
+
+}
+
 ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
@@ -27,6 +31,7 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     this->layerCount = 1;
     this->fitness = 0.0f;
     this->age = 0;
+    this->compatibility = 0.0f;
 
     // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
@@ -41,7 +46,10 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
 }
 
 // crossover
-ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.size(), "") {
+ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.size()) {
+    float disjointCount = 0;
+    float excessCount = 0;
+    float weightDifferenceSum = 0.0f;
     auto genomeItr1 = ann1.innovationSortedGenome.begin();
     auto genomeItr2 = ann2.innovationSortedGenome.begin();
 
@@ -68,6 +76,8 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                                 (*randomGeneItr)->getWeight(),
                                 (*randomGeneItr)->getInnovation(),
                                 (*randomGeneItr)->getEnabled());
+            // add weight difference
+            weightDifferenceSum += std::fabs((*genomeItr1)->getWeight() - (*genomeItr1)->getWeight());
             // increment both iterators
             if (genomeItr1 != ann1.innovationSortedGenome.end()) ++genomeItr1;
             if (genomeItr2 != ann2.innovationSortedGenome.end()) ++genomeItr2;
@@ -92,6 +102,7 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
             }
             // increment iterator with smallest innovation
             if(*smallerGenomePtr != smallerAnn->innovationSortedGenome.end()) ++(*smallerGenomePtr);
+            disjointCount++;
         }
     }
     // excess genes
@@ -102,6 +113,7 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                             (*genomeItr1)->getInnovation(),
                             (*genomeItr1)->getEnabled());
         ++genomeItr1;
+        excessCount++;
     }
     while (ann2.fitness >= ann1.fitness && genomeItr2 != ann2.innovationSortedGenome.end()) {
         genome.emplace_back(findOrCreateNode((*genomeItr2)->getFrom()->getNodeNum()),
@@ -110,7 +122,16 @@ ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.si
                             (*genomeItr2)->getInnovation(),
                             (*genomeItr2)->getEnabled());
         ++genomeItr2;
+        excessCount++;
     }
+    // compatibility and setup
+    // TODO: implement c weights
+    static const float C0 = 1.0f;
+    static const float C1 = 1.0f;
+    static const float C2 = 1.0f;
+    unsigned long N = std::max(ann1.genome.size(), ann2.genome.size());
+    if (N == 0) compatibility = 0.0f;
+    else compatibility = (excessCount / N) * C0 + (disjointCount / N) * C1 + weightDifferenceSum * C2;
     setup();
 }
 
