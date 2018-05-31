@@ -44,7 +44,8 @@ class ANN {
     unsigned int layerCount;
     float fitness;
     unsigned int age;
-    float compatibility;
+    static unsigned long idCount;
+    unsigned long id;
 
 public:
     // constructor
@@ -57,10 +58,12 @@ public:
 
     // set get
     std::string getSpecies();
+    void setSpecies(std::string species);
     float getFitness();
     void setFitness(float fitness);
     unsigned int getAge();
     void incrementAge();
+    unsigned long getId();
 
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
@@ -92,6 +95,8 @@ public:
     void printNodes();
     void printGenome();
     void printGenome(bool showDisabled);
+    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
+
 };
 
 
