@@ -437,9 +437,13 @@ void ANN::printGenome(bool showDisabled) {
                 std::cout << "  ";
             }
             std::cout << gene.getFrom()->getNodeNum()
-                      << " -> "
+                      << "("
+                      << gene.getFrom()->getLayer()
+                      << ") -> "
                       << gene.getTo()->getNodeNum()
-                      << "\t"
+                      << "("
+                      << gene.getTo()->getLayer()
+                      << ")\t"
                       << gene.getInnovation()
                       << "\t"
                       << gene.getWeight()

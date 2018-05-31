@@ -44,6 +44,7 @@ public:
     void survivorSelection();
     void addToSpecies(ANN &ann);
     void removeFromSpecies(ANN &ann);
+    void printGenerationInfo();
 };
 
 
