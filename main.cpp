@@ -3,7 +3,7 @@
 
 
 int main() {
-    NEAT neat = NEAT(5, 5, 123);
+    NEAT neat = NEAT(7, 7, 123);
     neat.train();
 
     return 0;

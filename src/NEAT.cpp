@@ -4,13 +4,16 @@
 
 #include "NEAT.hpp"
 
-const unsigned int NEAT::POP_SIZE = 100;
-const float NEAT::MUT_RATE = 0.02f;  // rate at which mutations occur
-const float NEAT::SPEC_RATE = 0.1f;  // rate at which normal NEAT speciation occurs
-const float NEAT::SPEC_THRESH = 0.5f;  // max compatibility between two ANNs to be considered in the same species
-const float NEAT::COMP_C0 = 2.0f;  // compatiblity constant modifier for excess innovations
-const float NEAT::COMP_C1 = 2.0f;  // compatiblity constant modifier for disjoint innovations
-const float NEAT::COMP_C2 = 0.0f;  // compatiblity constant modifier for average weight difference sum
+const unsigned int NEAT::POP_SIZE = 200; // population
+const float NEAT::MUT_RATE = 0.1f;
+const int NEAT::CONN_MUT_RATIO = 1;  // connection mutation ratio
+const int NEAT::NODE_MUT_RATIO = 1;  // node mutation ratio
+const int NEAT::WEIGHT_MUT_RATIO = 5;  // weight mutation ratio
+const float NEAT::SPEC_RATE = 0.01f;  // rate at which normal NEAT speciation occurs
+const float NEAT::SPEC_THRESH = 5.0f;  // max compatibility between two ANNs to be considered in the same species
+const float NEAT::COMP_C0 = 10.0f;  // compatiblity constant modifier for excess innovations
+const float NEAT::COMP_C1 = 10.0f;  // compatiblity constant modifier for disjoint innovations
+const float NEAT::COMP_C2 = 10.0f;  // compatiblity constant modifier for average weight difference sum
 const std::string NEAT::PS_ALG;  // algorithm used for parent selection
 const std::string NEAT::SS_ALG;  // algorithm used for survivor selection
 
@@ -39,7 +42,7 @@ void NEAT::populate() {
     // initial population
     population.clear();
     for (int p = 0; p < POP_SIZE; p++) {
-        population.emplace_back(25, 4, "0");
+        population.emplace_back(snake.getHeight() * snake.getWidth(), 4, "0");
         addToSpecies(population.back());
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back(), false));
@@ -94,21 +97,11 @@ void NEAT::crossover() {
         // crossover
         population.emplace_back(*p.first, *p.second);
         // mutations
-        if ((float)(rand() % 1000) / 1000.0f < MUT_RATE) {
-            int mutationRand = rand() % 3;
-            switch (mutationRand) {
-                case 0:
-                    population.back().weightMutation();
-                    break;
-                case 1:
-                    population.back().connectionMutation();
-                    break;
-                case 2:
-                    population.back().nodeMutation();
-                    break;
-                default:
-                    break;
-            }
+        if ((float)(rand() % 10000) / 10000.0f < MUT_RATE) {
+            int mutationRand = rand() % (CONN_MUT_RATIO + NODE_MUT_RATIO + WEIGHT_MUT_RATIO);
+            if (mutationRand < CONN_MUT_RATIO) population.back().connectionMutation();
+            else if (mutationRand < CONN_MUT_RATIO + NODE_MUT_RATIO) population.back().nodeMutation();
+            else population.back().weightMutation();
         }
         // fitness
         population.back().setFitness(snake.fitness(population.back(), false));
@@ -125,8 +118,8 @@ void NEAT::crossover() {
                 }
             }
             if (!foundSpecies) {
-                population.back().setSpecies(std::to_string(generationCount));
-                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) << std::endl;
+                population.back().setSpecies(std::to_string(generationCount) + "-" + std::to_string(population.back().getId()));
+                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) + "-" + std::to_string(population.back().getId()) << std::endl;
             }
         } else {
             population.back().setSpecies(p.first->getSpecies());

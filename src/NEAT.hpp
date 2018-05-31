@@ -25,15 +25,18 @@ public:
     NEAT(int sizeX, int sizeY, unsigned int seed);
 
     // constants
-    static const unsigned int POP_SIZE;  // max population size
-    static const float MUT_RATE;  // rate at which mutations occur
-    static const float SPEC_RATE;  // rate at which normal NEAT speciation occurs
-    static const float SPEC_THRESH;  // max compatibility between two ANNs to be considered in the same species
-    static const float COMP_C0;  // compatiblity constant modifier for excess innovations
-    static const float COMP_C1;  // compatiblity constant modifier for disjoint innovations
-    static const float COMP_C2;  // compatiblity constant modifier for average weight difference sum
-    static const std::string PS_ALG;  // algorithm used for parent selection
-    static const std::string SS_ALG;  // algorithm used for survivor selection
+    static const unsigned int POP_SIZE;
+    static const float MUT_RATE;
+    static const int CONN_MUT_RATIO;
+    static const int NODE_MUT_RATIO;
+    static const int WEIGHT_MUT_RATIO;
+    static const float SPEC_RATE;
+    static const float SPEC_THRESH;
+    static const float COMP_C0;
+    static const float COMP_C1;
+    static const float COMP_C2;
+    static const std::string PS_ALG;
+    static const std::string SS_ALG;
 
     // genetic algorithm
     void train();
