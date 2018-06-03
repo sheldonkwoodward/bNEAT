@@ -49,9 +49,9 @@ int SnakeGame::fitness(ANN agent, bool record) {
             generateFood();
         }
 
-        std::cout << "food: " << food.value().first << ", " << food.value().second << std::endl;
-        std::cout << "snake: " << std::endl;
-        std::cout << snake.toString() << std::endl;
+//        std::cout << "food: " << food.value().first << ", " << food.value().second << std::endl;
+//        std::cout << "snake: " << std::endl;
+//        std::cout << snake.toString() << std::endl;
 
         // record body
         if (record) {
@@ -66,16 +66,16 @@ int SnakeGame::fitness(ANN agent, bool record) {
 
         input = getDeque();
 
-        std::cout << "input: " << std::endl;
-        for (auto it : input) {
-            std::cout << it << std::endl;
-        }
+//        std::cout << "input: " << std::endl;
+//        for (auto it : input) {
+//            std::cout << it << std::endl;
+//        }
         output = agent.compute(input);
 
-        std::cout << "output: " << std::endl;
-        for (auto it : output) {
-            std::cout << it << std::endl;
-        }
+//        std::cout << "output: " << std::endl;
+//        for (auto it : output) {
+//            std::cout << it << std::endl;
+//        }
 
 
         int max = static_cast<int>(std::distance(output.begin(), std::max_element(output.begin(), output.end())));
