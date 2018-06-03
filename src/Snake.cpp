@@ -6,6 +6,7 @@
 #include <iostream>
 #include "Snake.hpp"
 
+
 Snake::Snake(int x1, int y1, int x2, int y2) {
     body = std::deque<std::pair<int, int>> {};
     body.push_front(std::pair(x2, y2));
@@ -27,6 +28,7 @@ bool Snake::inBody(std::pair<int, int> loc, bool whole) {
     int begin = 1;
     if (whole) {
         begin = 0;
+
     }
     for (int i = begin; i < body.size(); i++) {
         if (body[i] == loc) {
@@ -82,6 +84,7 @@ std::pair<int, int> Snake::right() {
         if (directions[i] == dir) {
             index = i;
         }
+
     }
     index += 1;
     if (index < 0) {
@@ -106,4 +109,3 @@ std::string Snake::toString() {
 
 Snake::Snake() {
 }
-

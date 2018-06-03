@@ -34,6 +34,7 @@ public:
 
     std::pair<int, int> left();
 
+
     std::pair<int, int> right();
 };
 
