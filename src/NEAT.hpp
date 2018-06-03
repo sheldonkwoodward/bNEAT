@@ -13,13 +13,12 @@
 #include <algorithm>
 #include <list>
 
-#import "Snake.hpp"
+#import "SnakeGame.hpp"
 
 
 class NEAT {
-    Snake snake;
+    SnakeGame snake;
     std::list<ANN> population;
-//    std::deque<ANN*> sortedPopulation;
     std::deque<std::pair<ANN*, ANN*>> parents;
     std::map<std::string, std::vector<ANN*>> species;
     unsigned int generationCount;
@@ -30,7 +29,7 @@ public:
     // constants
     unsigned int POP_SIZE = 100; // population
     // TODO: implement in parent selection
-    float POP_REPL = 0.5f;  // percent of population to be replaced every generation
+    float POP_REPL = 1.0f;  // percent of population to be replaced every generation
     float MUT_RATE = 0.05f;  // rate at which mutations occur
     int CONN_MUT_RATIO = 3;  // connection mutation ratio
     int NODE_MUT_RATIO = 3;  // node mutation ratio
