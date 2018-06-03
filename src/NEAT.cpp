@@ -6,7 +6,7 @@
 
 NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
     srand(seed);
-    population = std::deque<ANN>();
+    population = std::list<ANN>();
     parents = std::deque<std::pair<ANN*, ANN*>>();
     species = std::map<std::string, std::vector<ANN*>>();
     generationCount = 0;
@@ -34,7 +34,6 @@ void NEAT::populate() {
         // setup constructs
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back(), false));
-        addToSortedPopulation(population.back());
         addToSpecies(population.back());
     }
 }
@@ -94,7 +93,6 @@ void NEAT::crossover() {
         }
         // fitness
         population.back().setFitness(snake.fitness(population.back(), false));
-        addToSortedPopulation(population.back());
         // speciation
         if ((float)(rand() % 1000) / 1000.0f < SPEC_RATE) {
             bool foundSpecies = false;
@@ -119,12 +117,16 @@ void NEAT::crossover() {
 }
 
 void NEAT::survivorSelection() {
+    // sort population
+    if (SS_ALG == "ABS") population.sort(ANN::ageSort);
+    else if (SS_ALG == "FBS") population.sort(ANN::fitnessSort);
+    // kill survivors
     for (int i = 0; i < (float)POP_SIZE * POP_REPL; i++) {
-        removeFromSpecies(sortedPopulation.front());
-        // TODO: population never shrinks
-        sortedPopulation.pop_front();
+        removeFromSpecies(population.front());
+        population.pop_front();
     }
-    for (auto &ann : sortedPopulation) ann->incrementAge();
+    // increment age of survivors
+    for (auto &ann : population) ann.incrementAge();
     generationCount++;
 }
 
@@ -132,12 +134,12 @@ void NEAT::addToSpecies(ANN &ann) {
     species[ann.getSpecies()].push_back(&ann);
 }
 
-void NEAT::removeFromSpecies(ANN* ann) {
-    for (auto a = species.at(ann->getSpecies()).begin(); a != species.at(ann->getSpecies()).end(); ++a) {
-        if (*a == ann) {
-            species[ann->getSpecies()].erase(a);
-            if (species[ann->getSpecies()].empty()) {
-                species.erase(ann->getSpecies());
+void NEAT::removeFromSpecies(ANN &ann) {
+    for (auto a = species.at(ann.getSpecies()).begin(); a != species.at(ann.getSpecies()).end(); ++a) {
+        if (*a == &ann) {
+            species[ann.getSpecies()].erase(a);
+            if (species[ann.getSpecies()].empty()) {
+                species.erase(ann.getSpecies());
             }
             return;
         }
@@ -145,19 +147,8 @@ void NEAT::removeFromSpecies(ANN* ann) {
 }
 
 void NEAT::printGenerationInfo() {
-    std::deque<ANN*> copy = sortedPopulation;
-    std::sort(copy.begin(), copy.end(), ANN::fitnessSort);
-    std::cout << "Gen: " << generationCount << " - MaxFit: " << copy.back()->getFitness() << " - SpeciesNum: " << species.size() << std::endl;
-    if (generationCount % 50 == 0) copy.back()->printGenome();
-}
-
-void NEAT::addToSortedPopulation(ANN &ann) {
-    auto lower = sortedPopulation.begin();
-    if (SS_ALG == "ABS") {
-        lower = std::lower_bound(sortedPopulation.begin(), sortedPopulation.end(), &ann, ANN::ageSort);
-    }
-    else if (SS_ALG == "FBS") {
-        lower = std::lower_bound(sortedPopulation.begin(), sortedPopulation.end(), &ann, ANN::fitnessSort);
-    }
-    sortedPopulation.insert(lower, &ann);
+    std::list<ANN> copy = population;
+    copy.sort(ANN::fitnessSort);
+    std::cout << "Gen: " << generationCount << " - MaxFit: " << copy.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: " << species.size() << std::endl;
+    if (generationCount % 50 == 0) copy.back().printGenome();
 }
