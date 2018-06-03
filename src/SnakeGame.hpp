@@ -2,16 +2,17 @@
 // Created by Sheldon Woodward on 5/12/18.
 //
 
-#ifndef NEAT_SNAKE_HPP
-#define NEAT_SNAKE_HPP
+#ifndef NEAT_SNAKE_GAME_HPP
+#define NEAT_SNAKE_GAME_HPP
 
 #import <deque>
 #include <optional>
 #import "ANN.hpp"
+#include "Snake.hpp"
 
 
-class Snake {
-    std::deque<std::pair<int, int>> snake;
+class SnakeGame {
+    Snake snake;
     std::optional<std::pair<int, int>> food;
     int timeOut;
     int width;
@@ -21,14 +22,13 @@ class Snake {
 
     void generateFood();
 
-    void parseInput(std::deque<float> &input);
+    float look(std::pair<int,int> loc, std::pair<int,int> direction);
 
-    int validMove(std::deque<float> &output);
-
-    float Snake::look(int x, int y,);
+    bool outOfBounds(std::pair<int, int> loc);
+    std::deque<float> getDeque();
 
 public:
-    Snake(int sizeX, int sizeY);
+    SnakeGame(int sizeX, int sizeY);
 
     int fitness(ANN agent, bool record);
 

@@ -9,11 +9,11 @@
 #import <string>
 #include <cstdlib>
 
-#import "Snake.hpp"
+#import "SnakeGame.hpp"
 
 
 class NEAT {
-    Snake snake;
+    SnakeGame snake;
     std::deque<ANN> population;
 
 public:
