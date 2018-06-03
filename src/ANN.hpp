@@ -66,7 +66,8 @@ public:
     unsigned long getId();
 
     // sort
-    static bool fitnessSort(ANN &ann1, ANN &ann2);
+    static bool fitnessSort(ANN* ann1, ANN* ann2);
+    static bool ageSort(ANN* ann1, ANN* ann2);
 
     // setup
     void setup();

@@ -4,19 +4,6 @@
 
 #include "NEAT.hpp"
 
-const unsigned int NEAT::POP_SIZE = 200; // population
-const float NEAT::MUT_RATE = 0.1f;
-const int NEAT::CONN_MUT_RATIO = 1;  // connection mutation ratio
-const int NEAT::NODE_MUT_RATIO = 1;  // node mutation ratio
-const int NEAT::WEIGHT_MUT_RATIO = 5;  // weight mutation ratio
-const float NEAT::SPEC_RATE = 0.01f;  // rate at which normal NEAT speciation occurs
-const float NEAT::SPEC_THRESH = 5.0f;  // max compatibility between two ANNs to be considered in the same species
-const float NEAT::COMP_C0 = 10.0f;  // compatiblity constant modifier for excess innovations
-const float NEAT::COMP_C1 = 10.0f;  // compatiblity constant modifier for disjoint innovations
-const float NEAT::COMP_C2 = 10.0f;  // compatiblity constant modifier for average weight difference sum
-const std::string NEAT::PS_ALG;  // algorithm used for parent selection
-const std::string NEAT::SS_ALG;  // algorithm used for survivor selection
-
 NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
     srand(seed);
     population = std::deque<ANN>();
@@ -42,10 +29,13 @@ void NEAT::populate() {
     // initial population
     population.clear();
     for (int p = 0; p < POP_SIZE; p++) {
+        // add to population
         population.emplace_back(snake.getHeight() * snake.getWidth(), 4, "0");
-        addToSpecies(population.back());
+        // setup constructs
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back(), false));
+        addToSortedPopulation(population.back());
+        addToSpecies(population.back());
     }
 }
 
@@ -92,7 +82,6 @@ void NEAT::parentSelection() {
 }
 
 void NEAT::crossover() {
-//    std::cout << "CROSS" << std::endl;
     for (auto &p : parents) {
         // crossover
         population.emplace_back(*p.first, *p.second);
@@ -105,6 +94,7 @@ void NEAT::crossover() {
         }
         // fitness
         population.back().setFitness(snake.fitness(population.back(), false));
+        addToSortedPopulation(population.back());
         // speciation
         if ((float)(rand() % 1000) / 1000.0f < SPEC_RATE) {
             bool foundSpecies = false;
@@ -129,12 +119,12 @@ void NEAT::crossover() {
 }
 
 void NEAT::survivorSelection() {
-    // TODO: other options than complete population replacement
-    for (int i = 0; i < parents.size(); i++) {
-        removeFromSpecies(population.front());
-        population.pop_front();
+    for (int i = 0; i < (float)POP_SIZE * POP_REPL; i++) {
+        removeFromSpecies(sortedPopulation.front());
+        // TODO: population never shrinks
+        sortedPopulation.pop_front();
     }
-    for (auto &ann : population) ann.incrementAge();
+    for (auto &ann : sortedPopulation) ann->incrementAge();
     generationCount++;
 }
 
@@ -142,12 +132,12 @@ void NEAT::addToSpecies(ANN &ann) {
     species[ann.getSpecies()].push_back(&ann);
 }
 
-void NEAT::removeFromSpecies(ANN &ann) {
-    for (auto a = species.at(ann.getSpecies()).begin(); a != species.at(ann.getSpecies()).end(); ++a) {
-        if (*a == &ann) {
-            species[ann.getSpecies()].erase(a);
-            if (species[ann.getSpecies()].size() == 0) {
-                species.erase(ann.getSpecies());
+void NEAT::removeFromSpecies(ANN* ann) {
+    for (auto a = species.at(ann->getSpecies()).begin(); a != species.at(ann->getSpecies()).end(); ++a) {
+        if (*a == ann) {
+            species[ann->getSpecies()].erase(a);
+            if (species[ann->getSpecies()].empty()) {
+                species.erase(ann->getSpecies());
             }
             return;
         }
@@ -155,8 +145,19 @@ void NEAT::removeFromSpecies(ANN &ann) {
 }
 
 void NEAT::printGenerationInfo() {
-    std::deque<ANN> copy = population;
+    std::deque<ANN*> copy = sortedPopulation;
     std::sort(copy.begin(), copy.end(), ANN::fitnessSort);
-    std::cout << "Gen: " << generationCount << " - MaxFit: " << copy.back().getFitness() << " - SpeciesNum: " << species.size() << std::endl;
-    if (generationCount % 50 == 0) copy.back().printGenome();
+    std::cout << "Gen: " << generationCount << " - MaxFit: " << copy.back()->getFitness() << " - SpeciesNum: " << species.size() << std::endl;
+    if (generationCount % 50 == 0) copy.back()->printGenome();
+}
+
+void NEAT::addToSortedPopulation(ANN &ann) {
+    auto lower = sortedPopulation.begin();
+    if (SS_ALG == "ABS") {
+        lower = std::lower_bound(sortedPopulation.begin(), sortedPopulation.end(), &ann, ANN::ageSort);
+    }
+    else if (SS_ALG == "FBS") {
+        lower = std::lower_bound(sortedPopulation.begin(), sortedPopulation.end(), &ann, ANN::fitnessSort);
+    }
+    sortedPopulation.insert(lower, &ann);
 }
