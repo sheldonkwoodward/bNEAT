@@ -50,7 +50,7 @@ int SnakeGame::fitness(ANN &agent) {
 //        std::cout << snake.toString() << std::endl;
 
         // record body
-        agent.addLog(std::to_string(food.value().first) + "," + std::to_string(food.value().second) + "\n");
+        agent.addLog("food:" + std::to_string(food.value().first) + "," + std::to_string(food.value().second) + "\n");
         agent.addLog(snake.toString());
         agent.addLog("@@@\n");
 
