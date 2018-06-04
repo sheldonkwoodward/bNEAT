@@ -101,6 +101,7 @@ int SnakeGame::fitness(ANN &agent) {
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
+                    time -= 10;
                 } else {
                     snake.move(nextStep);
                 }
@@ -121,7 +122,9 @@ std::deque<float> SnakeGame::getDeque() {
     std::deque<float> input;
 
     input.push_back(look(snake.getHead(), snake.left()));
+    input.push_back(look(snake.getHead(), snake.leftDiagonal()));
     input.push_back(look(snake.getHead(), direction));
+    input.push_back(look(snake.getHead(), snake.rightDiagonal()));
     input.push_back(look(snake.getHead(), snake.right()));
     return input;
 }

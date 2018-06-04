@@ -34,7 +34,7 @@ void NEAT::populate() {
     population.clear();
     for (int p = 0; p < POP_SIZE; p++) {
         // add to population
-        population.emplace_back(3, 3, "0");
+        population.emplace_back(5, 3, "0");
         // setup constructs
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back()));
@@ -154,7 +154,8 @@ void NEAT::removeFromSpecies(ANN &ann) {
 void NEAT::printGenerationInfo() {
     population.sort(ANN::fitnessSort);
     std::cout << "Gen: " << generationCount << " - MaxFit: " << population.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: " << species.size() << std::endl;
-    if (generationCount == 300) {
-        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
+    if (generationCount %  10000 == 0 ) {
+//        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
+        population.back().dumpTopology("/home/charlie/Desktop/ann-dumps");
     }
 }
