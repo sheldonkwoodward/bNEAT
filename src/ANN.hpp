@@ -13,6 +13,7 @@
 #include <limits>
 #include <fstream>
 #include <algorithm>
+#include <cmath>
 
 #include "Node.hpp"
 #include "ConnectionGene.hpp"
@@ -43,9 +44,13 @@ class ANN {
     unsigned int layerCount;
     float fitness;
     unsigned int age;
+    static unsigned long idCount;
+    unsigned long id;
+    std::string log;
 
 public:
     // constructor
+    ANN(unsigned long inputNum, unsigned long outputNum);
     ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
 
     // crossover
@@ -54,13 +59,19 @@ public:
 
     // set get
     std::string getSpecies();
+    void setSpecies(std::string species);
     float getFitness();
     void setFitness(float fitness);
     unsigned int getAge();
     void incrementAge();
+    unsigned long getId();
+    std::string getLog();
+    void addLog(std::string log);
+    void resetLog();
 
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
+    static bool ageSort(ANN &ann1, ANN &ann2);
 
     // setup
     void setup();
@@ -85,10 +96,11 @@ public:
     // other
     float randomWeight();
     bool connectionExists(Node* from, Node* to);
-    void dumpTopology(std::string file);
+    void dumpTopology(std::string folder);
     void printNodes();
     void printGenome();
     void printGenome(bool showDisabled);
+    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
 };
 
 

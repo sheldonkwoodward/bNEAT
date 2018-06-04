@@ -28,7 +28,7 @@ float SnakeGame::look(std::pair<int, int> loc, std::pair<int, int> direction) {
     return static_cast<float>(-1.0 / count);
 }
 
-int SnakeGame::fitness(ANN agent, bool record) {
+int SnakeGame::fitness(ANN &agent) {
     snake = Snake(width / 2, (height / 2) - 1, width / 2, height / 2);
     std::deque<float> input;
     std::deque<float> output;
@@ -36,12 +36,8 @@ int SnakeGame::fitness(ANN agent, bool record) {
     int time = -1;
 
     // record begin
-    if (record) {
-        std::ofstream logFile;
-        logFile.open("logFile.txt", std::ios::app);
-        logFile << "Board: " << width << "," << height << std::endl;
-        logFile.close();
-    }
+    agent.resetLog();
+    agent.addLog("Board: " + std::to_string(width) + "," + std::to_string(height) + "\n");
 
     do {
         time += 1;
@@ -54,15 +50,9 @@ int SnakeGame::fitness(ANN agent, bool record) {
 //        std::cout << snake.toString() << std::endl;
 
         // record body
-        if (record) {
-            std::ofstream logFile;
-            logFile.open("logFile.txt", std::ios::app);
-            logFile << food.value().first << "," << food.value().second << std::endl;
-            logFile << snake.toString();
-            logFile << "@@@" << std::endl;
-            logFile.close();
-        }
-
+        agent.addLog(std::to_string(food.value().first) + "," + std::to_string(food.value().second) + "\n");
+        agent.addLog(snake.toString());
+        agent.addLog("@@@\n");
 
         input = getDeque();
 
@@ -121,12 +111,7 @@ int SnakeGame::fitness(ANN agent, bool record) {
 
     } while (!gameOver(time));
     //Log end
-    if (record) {
-        std::ofstream logFile;
-        logFile.open("logFile.txt", std::ios::app);
-        logFile << "###\n";
-        logFile.close();
-    }
+    agent.addLog("###\n");
 
     return snake.size() - 2;
 }
