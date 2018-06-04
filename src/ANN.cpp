@@ -161,6 +161,19 @@ unsigned long ANN::getId() {
     return id;
 }
 
+std::string ANN::getLog() {
+    return log;
+}
+
+void ANN::addLog(std::string log) {
+    this->log.append(log);
+}
+
+void ANN::resetLog() {
+    log.clear();
+}
+
+
 // sort
 bool ANN::fitnessSort(ANN &ann1, ANN &ann2) {
     return ann1.fitness < ann2.fitness;
@@ -407,17 +420,17 @@ bool ANN::connectionExists(Node* from, Node* to) {
     return false;
 }
 
-void ANN::dumpTopology(std::string file) {
-    std::ofstream dumpFile;
-    dumpFile.open(file);
-    for (auto node : nodes) {
-        dumpFile << node.getNodeNum() << " " << node.getLayer() << "\n";
-    }
-    dumpFile << "###\n";
-    for (auto cg : genome) {
-        if (!cg.getEnabled()) continue;
-        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
-    }
+void ANN::dumpTopology(std::string folder) {
+//    std::ofstream topDump;
+    std::ofstream trainDump;
+//    topDump.open(folder + "/top-g" + std::to_string());
+    trainDump.open(folder + "/train.txt", std::ios::app);
+    trainDump << log;
+//    dumpFile << "###\n";
+//    for (auto cg : genome) {
+//        if (!cg.getEnabled()) continue;
+//        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
+//    }
 }
 
 void ANN::printNodes() {

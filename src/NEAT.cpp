@@ -20,7 +20,11 @@ void NEAT::train() {
         parentSelection();
         crossover();
         survivorSelection();
-        printGenerationInfo();
+        if (generationCount % 50 == 0) printGenerationInfo();
+        if (generationCount % 250 == 0) {
+            population.sort(ANN::fitnessSort);
+            population.back().printGenome();
+        }
         i++;
     }
 }
@@ -33,7 +37,7 @@ void NEAT::populate() {
         population.emplace_back(3, 3, "0");
         // setup constructs
         population.back().connectionMutation();
-        population.back().setFitness(snake.fitness(population.back(), false));
+        population.back().setFitness(snake.fitness(population.back()));
         addToSpecies(population.back());
     }
 }
@@ -92,7 +96,7 @@ void NEAT::crossover() {
             else population.back().weightMutation();
         }
         // fitness
-        population.back().setFitness(snake.fitness(population.back(), false));
+        population.back().setFitness(snake.fitness(population.back()));
         // speciation
         if ((float)(rand() % 1000) / 1000.0f < SPEC_RATE) {
             bool foundSpecies = false;
@@ -106,8 +110,9 @@ void NEAT::crossover() {
                 }
             }
             if (!foundSpecies) {
+                // TODO: new species being killed immediately without time to develop
                 population.back().setSpecies(std::to_string(generationCount) + "-" + std::to_string(population.back().getId()));
-                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) + "-" + std::to_string(population.back().getId()) << std::endl;
+//                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) + "-" + std::to_string(population.back().getId()) << std::endl;
             }
         } else {
             population.back().setSpecies(p.first->getSpecies());
@@ -147,14 +152,9 @@ void NEAT::removeFromSpecies(ANN &ann) {
 }
 
 void NEAT::printGenerationInfo() {
-    std::list<ANN> copy = population;
-    copy.sort(ANN::fitnessSort);
-    std::cout << "Gen: " << generationCount << " - MaxFit: " << copy.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: " << species.size() << std::endl;
-    if (generationCount % 50 == 0) {
-        copy.back().printGenome();
-        copy.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps/dump-g" + std::to_string(generationCount) + ".txt");
-    }
-    if(generationCount == 150) {
-        std::exit(0);
+    population.sort(ANN::fitnessSort);
+    std::cout << "Gen: " << generationCount << " - MaxFit: " << population.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: " << species.size() << std::endl;
+    if (generationCount == 300) {
+        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
     }
 }

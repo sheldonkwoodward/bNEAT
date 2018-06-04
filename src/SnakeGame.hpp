@@ -30,7 +30,7 @@ class SnakeGame {
 public:
     SnakeGame(int sizeX, int sizeY);
 
-    int fitness(ANN agent, bool record);
+    int fitness(ANN &agent);
 
 };
 
