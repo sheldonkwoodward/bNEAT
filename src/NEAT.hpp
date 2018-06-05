@@ -28,20 +28,20 @@ public:
 
     // constants
     unsigned int POP_SIZE = 100; // population
-    // TODO: implement in parent selection
-    float POP_REPL = 1.0f;  // percent of population to be replaced every generation
+    // TODO: implement percent population replacement
     float MUT_RATE = 0.05f;  // rate at which mutations occur
     int CONN_MUT_RATIO = 1;  // connection mutation ratio
     int NODE_MUT_RATIO = 1;  // node mutation ratio
     int WEIGHT_MUT_RATIO = 1;  // weight mutation ratio
-    float SPEC_RATE = 0.1f;  // rate at which normal NEAT speciation occurs
+    float SPEC_RATE = 0.05f;  // rate at which normal NEAT speciation occurs
     float SPEC_THRESH = 1.0f;  // max compatibility between two ANNs to be considered in the same species
-    float COMP_C0 = 225.0f;  // compatiblity constant modifier for excess innovations
-    float COMP_C1 = 225.0f;  // compatiblity constant modifier for disjoint innovations
-    float COMP_C2 = 225.0f;  // compatiblity constant modifier for average weight difference sum
-    // TODO: implement selection algorithms
-    std::string PS_ALG = "RWS";  // algorithm used for parent selection - RWS, SUS, TS, RS, RAND
-    std::string SS_ALG = "FBS";  // algorithm used for survivor selection - ABS, FBS, RAND
+    float COMP_C0 = 750.0f;  // compatiblity constant modifier for excess innovations
+    float COMP_C1 = 750.0f;  // compatiblity constant modifier for disjoint innovations
+    float COMP_C2 = 700.0f;  // compatiblity constant modifier for average weight difference sum
+    // TODO: implement rank selection
+    std::string PS_ALG = "RWS";  // algorithm used for parent selection - RWS, TS, RS, RAND
+    int TS_K = 3;  // the number of participants in each tournament for TS selection
+    std::string SS_ALG = "FBS";  // algorithm used for survivor selection - ABS, FBS
 
     // genetic algorithm
     void train();

@@ -79,6 +79,7 @@ int SnakeGame::fitness(ANN &agent) {
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
+                    time = 0;
                 } else {
                     snake.move(nextStep);
                 }
@@ -90,6 +91,7 @@ int SnakeGame::fitness(ANN &agent) {
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
+                    time = 0;
                 } else {
                     snake.move(nextStep);
                 }
@@ -101,6 +103,7 @@ int SnakeGame::fitness(ANN &agent) {
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
+                    time = 0;
                 } else {
                     snake.move(nextStep);
                 }
