@@ -53,10 +53,13 @@ public:
     ANN(unsigned long inputNum, unsigned long outputNum);
     ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
 
+public:
     // crossover
     ANN(ANN &ann1, ANN &ann2);
     Node* findOrCreateNode(int node);
+    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
 
+public:
     // set get
     std::string getSpecies();
     void setSpecies(std::string species);
@@ -66,13 +69,18 @@ public:
     void incrementAge();
     unsigned long getId();
     std::string getLog();
+
+public:
+    // logging
     void addLog(std::string log);
     void resetLog();
 
+public:
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
     static bool ageSort(ANN &ann1, ANN &ann2);
 
+private:
     // setup
     void setup();
     void sortNodes();
@@ -81,6 +89,7 @@ public:
     void determineLayers(Node* node, unsigned int layer, std::deque<int> &stack);
     void determineWeightMatrix();
 
+public:
     // mutations
     void weightMutation();
     void nodeMutation();
@@ -89,18 +98,22 @@ public:
     // computation
     std::deque<float> compute(std::deque<float> inputs);
 
+private:
     // activation
     void hiddenActivation(float &value);
     void outputActivation(float &value);
 
-    // other
-    float randomWeight();
-    bool connectionExists(Node* from, Node* to);
-    void dumpTopology(std::string folder);
+public:
+    // info dump
     void printNodes();
     void printGenome();
     void printGenome(bool showDisabled);
-    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
+    void dumpTopology(std::string folder);
+
+private:
+    // other
+    float randomWeight();
+    bool connectionExists(Node* from, Node* to);
 };
 
 
