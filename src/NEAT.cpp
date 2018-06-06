@@ -12,6 +12,7 @@ NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
     generationCount = 0;
 }
 
+// train
 void NEAT::train() {
     // training
     populate();
@@ -21,14 +22,11 @@ void NEAT::train() {
         crossover();
         survivorSelection();
         if (generationCount % 50 == 0) printGenerationInfo();
-        if (generationCount % 250 == 0) {
-            population.sort(ANN::fitnessSort);
-            population.back().printGenome();
-        }
         i++;
     }
 }
 
+// genetic algorithm
 void NEAT::populate() {
     // initial population
     population.clear();
@@ -146,6 +144,7 @@ void NEAT::survivorSelection() {
     generationCount++;
 }
 
+// speciation
 void NEAT::addToSpecies(ANN &ann) {
     species[ann.getSpecies()].push_back(&ann);
 }
@@ -162,6 +161,7 @@ void NEAT::removeFromSpecies(ANN &ann) {
     }
 }
 
+// info dump
 void NEAT::printGenerationInfo() {
     population.sort(ANN::fitnessSort);
     std::cout << "Gen: " << generationCount << " - MinFit: " << population.front().getFitness() << " - MaxFit: "

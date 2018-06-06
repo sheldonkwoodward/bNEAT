@@ -5,13 +5,13 @@
 #ifndef NEAT_NEAT_HPP
 #define NEAT_NEAT_HPP
 
+#include <algorithm>
+#include <cstdlib>
 #import <deque>
-#include <vector>
+#include <list>
 #include <map>
 #import <string>
-#include <cstdlib>
-#include <algorithm>
-#include <list>
+#include <vector>
 
 #import "SnakeGame.hpp"
 
@@ -26,7 +26,8 @@ class NEAT {
 public:
     NEAT(int sizeX, int sizeY, unsigned int seed);
 
-    // constants
+public:
+    // genetic algorithm parameters
     unsigned int POP_SIZE = 100; // population
     // TODO: implement percent population replacement
     float MUT_RATE = 0.05f;  // rate at which mutations occur
@@ -43,15 +44,24 @@ public:
     int TS_K = 3;  // the number of participants in each tournament for TS selection
     std::string SS_ALG = "FBS";  // algorithm used for survivor selection - ABS, FBS
 
-    // genetic algorithm
+public:
+    // train
     void train();
+
+private:
+    // genetic algorithm
     void populate();
-    void parentSelection(); // define multiple algorithms for parents selection
+    void parentSelection();
     void crossover();
-//    ANN crossover(ANN &ann1, ANN &ann2, float mutationRate, float speciationRate, float speciationThreshold);
     void survivorSelection();
+
+private:
+    // speciation
     void addToSpecies(ANN &ann);
     void removeFromSpecies(ANN &ann);
+
+public:
+    // info dump
     void printGenerationInfo();
 };
 
