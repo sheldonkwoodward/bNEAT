@@ -121,7 +121,6 @@ void NEAT::crossover() {
                 // TODO: new species being killed immediately without time to develop
                 population.back().setSpecies(
                         std::to_string(generationCount) + "-" + std::to_string(population.back().getId()));
-//                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) + "-" + std::to_string(population.back().getId()) << std::endl;
             }
         } else {
             population.back().setSpecies(p.first->getSpecies());

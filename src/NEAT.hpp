@@ -35,9 +35,9 @@ public:
     int WEIGHT_MUT_RATIO = 1;  // weight mutation ratio
     float SPEC_RATE = 0.05f;  // rate at which normal NEAT speciation occurs
     float SPEC_THRESH = 1.0f;  // max compatibility between two ANNs to be considered in the same species
-    float COMP_C0 = 750.0f;  // compatiblity constant modifier for excess innovations
-    float COMP_C1 = 750.0f;  // compatiblity constant modifier for disjoint innovations
-    float COMP_C2 = 700.0f;  // compatiblity constant modifier for average weight difference sum
+    float COMP_C0 = 750.0f;  // compatibility constant modifier for excess innovations
+    float COMP_C1 = 750.0f;  // compatibility constant modifier for disjoint innovations
+    float COMP_C2 = 700.0f;  // compatibility constant modifier for average weight difference sum
     std::string PS_ALG = "RWS";  // algorithm used for parent selection - RWS, TS, RAND
     int TS_K = 3;  // the number of participants in each tournament for TS selection
     std::string SS_ALG = "FBS";  // algorithm used for survivor selection - ABS, FBS
