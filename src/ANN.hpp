@@ -5,19 +5,17 @@
 #ifndef NEAT_ANN_HPP
 #define NEAT_ANN_HPP
 
-#include <deque>
-#include <vector>
-#include <string>
-#include <iostream>
-#include <cstdlib>
-#include <limits>
-#include <fstream>
 #include <algorithm>
 #include <cmath>
+#include <deque>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
-#include "Node.hpp"
 #include "ConnectionGene.hpp"
 #include "Gene.h"
+#include "Node.hpp"
 
 
 class ANN {
