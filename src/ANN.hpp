@@ -25,27 +25,29 @@ class ANN {
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
     static std::vector<Gene> innovations;
+    unsigned int layerCount;
 
-    // pointer structures
+    // node lists
     std::deque<Node*> inputNodes;
     std::deque<Node*> outputNodes;
     std::deque<Node*> layerSortedNodes;
     std::deque<Node*> nonInputLayerSortedNodes;
-    std::deque<Node*> sequentialSortedNodes;
+    std::deque<Node*> numberSortedNodes;
+
+    // genome lists
     std::deque<ConnectionGene*> innovationSortedGenome;
-    std::deque<ConnectionGene*> enabledSortedGenome;
+    std::deque<ConnectionGene*> enabledInnovationSortedGenome;
 
     // computation structures
     std::deque<std::deque<float>> weightMatrix;
     std::deque<float*> inputVector;
 
     // other attributes
-    std::string species;
-    unsigned int layerCount;
-    float fitness;
-    unsigned int age;
     static unsigned long idCount;
     unsigned long id;
+    std::string species;
+    float fitness;
+    unsigned int age;
     std::string log;
 
 public:
@@ -94,7 +96,10 @@ public:
     void weightMutation();
     void nodeMutation();
     void connectionMutation();
+    static float randomWeight();
+    bool connectionExists(Node* from, Node* to);
 
+public:
     // computation
     std::deque<float> compute(std::deque<float> inputs);
 
@@ -108,12 +113,8 @@ public:
     void printNodes();
     void printGenome();
     void printGenome(bool showDisabled);
-    void dumpTopology(std::string folder);
-
-private:
-    // other
-    float randomWeight();
-    bool connectionExists(Node* from, Node* to);
+    void dumpTopology(std::string file);
+    void dumpTrainLog(std::string file);
 };
 
 

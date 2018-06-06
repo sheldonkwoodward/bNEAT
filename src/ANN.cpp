@@ -15,25 +15,31 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum) : ANN(inputNum, output
 }
 
 ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
+    // topology
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
+    this->layerCount = 1;
 
+    // node lists
     this->inputNodes = std::deque<Node*>();
     this->outputNodes = std::deque<Node*>();
     this->layerSortedNodes = std::deque<Node*>();
     this->nonInputLayerSortedNodes = std::deque<Node*>();
-    this->sequentialSortedNodes = std::deque<Node*>();
-    this->innovationSortedGenome = std::deque<ConnectionGene*>();
-    this->enabledSortedGenome = std::deque<ConnectionGene*>();
+    this->numberSortedNodes = std::deque<Node*>();
 
+    // genome lists
+    this->innovationSortedGenome = std::deque<ConnectionGene*>();
+    this->enabledInnovationSortedGenome = std::deque<ConnectionGene*>();
+
+    // computation structure
     this->weightMatrix = std::deque<std::deque<float>>();
     this->inputVector = std::deque<float*>();
 
+    // other attributes
+    this->id = idCount++;
     this->species = std::move(species);
-    this->layerCount = 1;
     this->fitness = 0.0f;
     this->age = 0;
-    this->id = idCount++;
 
     // add inputs and outputs
     for (int i = 0; i < inputNum; i++) {
@@ -226,7 +232,6 @@ void ANN::resetLog() {
     log.clear();
 }
 
-
 // sort
 bool ANN::fitnessSort(ANN &ann1, ANN &ann2) {
     return ann1.fitness < ann2.fitness;
@@ -247,30 +252,30 @@ void ANN::setup() {
 void ANN::sortNodes() {
     layerSortedNodes.clear();
     nonInputLayerSortedNodes.clear();
-    sequentialSortedNodes.clear();
+    numberSortedNodes.clear();
     for (auto &node : nodes) {
         layerSortedNodes.push_back(&node);
-        sequentialSortedNodes.push_back(&node);
+        numberSortedNodes.push_back(&node);
         if (std::find(inputNodes.begin(), inputNodes.end(), &node) == inputNodes.end()) {
             nonInputLayerSortedNodes.push_back(&node);
         }
     }
     std::sort(layerSortedNodes.begin(), layerSortedNodes.end(), Node::layerSort);
     std::sort(nonInputLayerSortedNodes.begin(), nonInputLayerSortedNodes.end(), Node::layerSort);
-    std::sort(sequentialSortedNodes.begin(), sequentialSortedNodes.end(), Node::sequentialSort);
+    std::sort(numberSortedNodes.begin(), numberSortedNodes.end(), Node::sequentialSort);
 }
 
 void ANN::sortGenome() {
     innovationSortedGenome.clear();
-    enabledSortedGenome.clear();
+    enabledInnovationSortedGenome.clear();
     for (auto &cg : genome) {
         innovationSortedGenome.push_back(&cg);
         if (cg.getEnabled()) {
-            enabledSortedGenome.push_back(&cg);
+            enabledInnovationSortedGenome.push_back(&cg);
         }
     }
     std::sort(innovationSortedGenome.begin(), innovationSortedGenome.end(), ConnectionGene::innovationSortPtr);
-    std::sort(enabledSortedGenome.begin(), enabledSortedGenome.end(), ConnectionGene::layerSort);
+    std::sort(enabledInnovationSortedGenome.begin(), enabledInnovationSortedGenome.end(), ConnectionGene::layerSort);
 }
 
 void ANN::determineLayers() {
@@ -313,7 +318,7 @@ void ANN::determineWeightMatrix() {
     }
 
     // build weight matrix
-    for (auto &cg : enabledSortedGenome) {
+    for (auto &cg : enabledInnovationSortedGenome) {
         weightMatrix[cg->getTo()->getNodeNum()][cg->getFrom()->getNodeNum()] = cg->getWeight();
     }
 }
@@ -364,7 +369,7 @@ void ANN::weightMutation() {
 void ANN::nodeMutation() {
     if (genome.empty()) return;
     // find random connections
-    ConnectionGene* randomConnection = enabledSortedGenome.at(rand() % enabledSortedGenome.size());
+    ConnectionGene* randomConnection = enabledInnovationSortedGenome.at(rand() % enabledInnovationSortedGenome.size());
     randomConnection->setEnabled(false);
     // TODO: ensure nodeNum doesn't already exist
     nodes.emplace_back((int)nodes.size());
@@ -420,6 +425,18 @@ void ANN::connectionMutation() {
     setup();
 }
 
+float ANN::randomWeight() {
+    // TODO: use C++ random number generators
+    return (float)(rand() % 2000 - 1000) / 1000.0f;
+}
+
+bool ANN::connectionExists(Node* from, Node* to) {
+    // TODO: binary search
+    for (auto &cg : genome)
+        if (cg.getFrom() == from && cg.getTo() == to) return true;
+    return false;
+}
+
 // computation
 std::deque<float> ANN::compute(std::deque<float> inputs) {
     // set inputs and outputs
@@ -429,7 +446,7 @@ std::deque<float> ANN::compute(std::deque<float> inputs) {
 
     // set inputVector
     inputVector.clear();
-    for (auto &node : sequentialSortedNodes) inputVector.push_back(node->getValuePtr());
+    for (auto &node : numberSortedNodes) inputVector.push_back(node->getValuePtr());
 
     // feed network
     for (auto &node : nonInputLayerSortedNodes) {
@@ -498,28 +515,19 @@ void ANN::printGenome(bool showDisabled) {
     }
 }
 
-void ANN::dumpTopology(std::string folder) {
-//    std::ofstream topDump;
-    std::ofstream trainDump;
-//    topDump.open(folder + "/top-g" + std::to_string());
-    trainDump.open(folder + "/train.txt", std::ios::app);
-    trainDump << log;
-//    dumpFile << "###\n";
-//    for (auto cg : genome) {
-//        if (!cg.getEnabled()) continue;
-//        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
-//    }
+void ANN::dumpTopology(std::string file) {
+    std::ofstream dumpFile;
+    dumpFile.open(file, std::ios::app);
+    dumpFile << log;
+    dumpFile.close();
 }
 
-// other
-float ANN::randomWeight() {
-    // TODO: use C++ random number generators
-    return (float)(rand() % 2000 - 1000) / 1000.0f;
-}
-
-bool ANN::connectionExists(Node* from, Node* to) {
-    // TODO: binary search
-    for (auto &cg : genome)
-        if (cg.getFrom() == from && cg.getTo() == to) return true;
-    return false;
+void ANN::dumpTrainLog(std::string file) {
+    std::ofstream dumpFile;
+    dumpFile.open(file, std::ios::app);
+    dumpFile << "###\n";
+    for (auto cg : genome) {
+        if (!cg.getEnabled()) continue;
+        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
+    }
 }
