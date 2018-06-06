@@ -15,5 +15,6 @@ Todos
 -----
 - ANN copy constructor
 - Implement vectors with std::unique_ptr instead of deques
-- Make connection gene a struct
+- Make ConnectionGene a struct
+- Put GA parameters into a struct   
 - Tests

@@ -53,8 +53,6 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     setup();
 }
 
-// TODO: copy constructor
-
 // crossover
 ANN::ANN(ANN &ann1, ANN &ann2) : ANN(ann1.inputNodes.size(), ann1.outputNodes.size()) {
     auto genomeItr1 = ann1.innovationSortedGenome.begin();
@@ -303,7 +301,6 @@ void ANN::determineLayers(Node* node, unsigned int layer, std::deque<int> &stack
             if (recurrentConnection == stack.end()) {
                 determineLayers(cg->getFrom(), node->getLayer(), stack);
             } else {
-                // TODO: look into better way of removing recurrence
                 cg->setEnabled(false);
             }
         }
@@ -426,7 +423,6 @@ void ANN::connectionMutation() {
 }
 
 float ANN::randomWeight() {
-    // TODO: use C++ random number generators
     return (float)(rand() % 2000 - 1000) / 1000.0f;
 }
 
