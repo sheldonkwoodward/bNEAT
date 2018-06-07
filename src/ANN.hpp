@@ -81,7 +81,6 @@ public:
 public:
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
-    static bool fitnessSortPtr(ANN* ann1, ANN* ann2);
     static bool ageSort(ANN &ann1, ANN &ann2);
 
 private:

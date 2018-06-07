@@ -247,10 +247,6 @@ bool ANN::fitnessSort(ANN &ann1, ANN &ann2) {
     return ann1.fitness < ann2.fitness;
 }
 
-bool ANN::fitnessSortPtr(ANN *ann1, ANN *ann2) {
-    return ann1->fitness < ann2->fitness;
-}
-
 bool ANN::ageSort(ANN &ann1, ANN &ann2) {
     return ann1.age < ann2.age;
 }

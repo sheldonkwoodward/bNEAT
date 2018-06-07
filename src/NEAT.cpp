@@ -24,7 +24,7 @@ void NEAT::train(const std::string &dumpFile) {
         if (generationCount % 10 == 0) printGenerationInfo();
         i++;
         if (generationCount == 1000) {
-            std::sort(population.begin(), population.end(), ANN::fitnessSort);
+            population.sort(ANN::fitnessSort);
             population.back().dumpTrainLog("/Users/sheldonwoodward/Desktop/train-dump.txt");
             population.back().dumpTopology("/Users/sheldonwoodward/Desktop/topology-dump.txt");
         }
@@ -176,7 +176,7 @@ void NEAT::printGenerationInfo() {
 }
 
 void NEAT::dumpGenerationInfo(const std::string &dumpFile) {
-    std::sort(population.begin(), population.end(), ANN::fitnessSort);
+    population.sort(ANN::fitnessSort);
     // TODO: file setup
     std::ofstream file;
     file.open(dumpFile, std::ios::app);
