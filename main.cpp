@@ -3,8 +3,8 @@
 
 
 int main() {
-    NEAT neat = NEAT(10, 10, 123);
+    NEAT neat = NEAT(10, 10, 569283476);
     neat.train();
-
+    
     return 0;
 }

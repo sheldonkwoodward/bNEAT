@@ -15,8 +15,8 @@ public:
     explicit Node(int nodeNum);
 
     // sort
-    static bool layerSort(Node *n1, Node *n2);
-    static bool sequentialSort(Node *n1, Node *n2);
+    static bool layerSort(Node* n1, Node* n2);
+    static bool sequentialSort(Node* n1, Node* n2);
 
     // set get
     int getNodeNum();

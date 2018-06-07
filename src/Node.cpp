@@ -12,13 +12,13 @@ Node::Node(int nodeNum) {
 }
 
 // sort functions
-bool Node::layerSort(Node *n1, Node *n2) {
+bool Node::layerSort(Node* n1, Node* n2) {
     if (n1->layer <= n2->layer) return false;
     else if (n1->layer == n2->layer && n1->nodeNum < n2->nodeNum) return false;
     return true;
 }
 
-bool Node::sequentialSort(Node *n1, Node *n2) {
+bool Node::sequentialSort(Node* n1, Node* n2) {
     return n1->nodeNum < n2->nodeNum;
 }
 

@@ -5,19 +5,17 @@
 #ifndef NEAT_ANN_HPP
 #define NEAT_ANN_HPP
 
-#include <deque>
-#include <vector>
-#include <string>
-#include <iostream>
-#include <cstdlib>
-#include <limits>
-#include <fstream>
 #include <algorithm>
 #include <cmath>
+#include <deque>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
-#include "Node.hpp"
 #include "ConnectionGene.hpp"
 #include "Gene.h"
+#include "Node.hpp"
 
 
 class ANN {
@@ -25,27 +23,29 @@ class ANN {
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
     static std::vector<Gene> innovations;
+    unsigned int layerCount;
 
-    // pointer structures
+    // node lists
     std::deque<Node*> inputNodes;
     std::deque<Node*> outputNodes;
     std::deque<Node*> layerSortedNodes;
     std::deque<Node*> nonInputLayerSortedNodes;
-    std::deque<Node*> sequentialSortedNodes;
+    std::deque<Node*> numberSortedNodes;
+
+    // genome lists
     std::deque<ConnectionGene*> innovationSortedGenome;
-    std::deque<ConnectionGene*> enabledSortedGenome;
+    std::deque<ConnectionGene*> enabledInnovationSortedGenome;
 
     // computation structures
     std::deque<std::deque<float>> weightMatrix;
     std::deque<float*> inputVector;
 
     // other attributes
-    std::string species;
-    unsigned int layerCount;
-    float fitness;
-    unsigned int age;
     static unsigned long idCount;
     unsigned long id;
+    std::string species;
+    float fitness;
+    unsigned int age;
     std::string log;
 
 public:
@@ -53,10 +53,13 @@ public:
     ANN(unsigned long inputNum, unsigned long outputNum);
     ANN(unsigned long inputNum, unsigned long outputNum, std::string species);
 
+public:
     // crossover
     ANN(ANN &ann1, ANN &ann2);
     Node* findOrCreateNode(int node);
+    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
 
+public:
     // set get
     std::string getSpecies();
     void setSpecies(std::string species);
@@ -66,13 +69,18 @@ public:
     void incrementAge();
     unsigned long getId();
     std::string getLog();
+
+public:
+    // logging
     void addLog(std::string log);
     void resetLog();
 
+public:
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
     static bool ageSort(ANN &ann1, ANN &ann2);
 
+private:
     // setup
     void setup();
     void sortNodes();
@@ -81,26 +89,30 @@ public:
     void determineLayers(Node* node, unsigned int layer, std::deque<int> &stack);
     void determineWeightMatrix();
 
+public:
     // mutations
     void weightMutation();
     void nodeMutation();
     void connectionMutation();
+    static float randomWeight();
+    bool connectionExists(Node* from, Node* to);
 
+public:
     // computation
     std::deque<float> compute(std::deque<float> inputs);
 
+private:
     // activation
     void hiddenActivation(float &value);
     void outputActivation(float &value);
 
-    // other
-    float randomWeight();
-    bool connectionExists(Node* from, Node* to);
-    void dumpTopology(std::string folder);
+public:
+    // info dump
     void printNodes();
     void printGenome();
     void printGenome(bool showDisabled);
-    static float compatibility(ANN &ann1, ANN &ann2, float C0, float C1, float C2);
+    void dumpTopology(std::string file);
+    void dumpTrainLog(std::string file);
 };
 
 

@@ -7,28 +7,26 @@
 NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
     srand(seed);
     population = std::list<ANN>();
-    parents = std::deque<std::pair<ANN*, ANN*>>();
-    species = std::map<std::string, std::vector<ANN*>>();
+    parents = std::deque<std::pair<ANN *, ANN *>>();
+    species = std::map<std::string, std::vector<ANN *>>();
     generationCount = 0;
 }
 
+// train
 void NEAT::train() {
     // training
     populate();
     int i = 0;
-    while(i > -1) {
+    while (i > -1) {
         parentSelection();
         crossover();
         survivorSelection();
         if (generationCount % 50 == 0) printGenerationInfo();
-        if (generationCount % 250 == 0) {
-            population.sort(ANN::fitnessSort);
-            population.back().printGenome();
-        }
         i++;
     }
 }
 
+// genetic algorithm
 void NEAT::populate() {
     // initial population
     population.clear();
@@ -50,15 +48,13 @@ void NEAT::parentSelection() {
         // calculate total fitness of species
         int fitnessSum = 0;
         for (auto &ann : spec.second) fitnessSum += ann->getFitness();
-        // all fitness 0 in species
-        if (fitnessSum == 0) {
+        if (fitnessSum == 0 || PS_ALG == "RAND") {
             for (int i = 0; i < spec.second.size(); i++) {
                 parents.emplace_back();
                 parents.back().first = spec.second[rand() % spec.second.size()];
                 parents.back().second = spec.second[rand() % spec.second.size()];
             }
-        } else {
-            // roulette wheel spinning
+        } else if (PS_ALG == "RWS") {
             for (int i = 0; i < spec.second.size(); i++) {
                 // wheel prep
                 parents.emplace_back();
@@ -76,9 +72,20 @@ void NEAT::parentSelection() {
                         parents.back().second = spec.second[ann];
                     if (parents.back().first != nullptr && parents.back().second != nullptr) break;
                 }
-                if (parents.back().first == nullptr || parents.back().second == nullptr)
-                    std::cout << "BAD PARENT SELECTION: " << parents.back().first << " " << parents.back().second
-                              << std::endl;
+            }
+        } else if (PS_ALG == "TS") {
+            for (int i = 0; i < spec.second.size(); i++) {
+                // wheel prep
+                parents.emplace_back();
+                for (int r = 0; r < TS_K * 2; r++) {
+                    // TODO: could choose same ANN twice
+                    unsigned long roulette = rand() % spec.second.size();
+                    if (r % 2 == 0 && (parents.back().first == nullptr || spec.second[roulette]->getFitness() > parents.back().first->getFitness())) {
+                        parents.back().first = spec.second[roulette];
+                    } else if (parents.back().second == nullptr || spec.second[roulette]->getFitness() > parents.back().second->getFitness()) {
+                        parents.back().second = spec.second[roulette];
+                    }
+                }
             }
         }
     }
@@ -89,7 +96,7 @@ void NEAT::crossover() {
         // crossover
         population.emplace_back(*p.first, *p.second);
         // mutations
-        if ((float)(rand() % 10000) / 10000.0f < MUT_RATE) {
+        if ((float) (rand() % 10000) / 10000.0f < MUT_RATE) {
             int mutationRand = rand() % (CONN_MUT_RATIO + NODE_MUT_RATIO + WEIGHT_MUT_RATIO);
             if (mutationRand < CONN_MUT_RATIO) population.back().connectionMutation();
             else if (mutationRand < CONN_MUT_RATIO + NODE_MUT_RATIO) population.back().nodeMutation();
@@ -98,12 +105,13 @@ void NEAT::crossover() {
         // fitness
         population.back().setFitness(snake.fitness(population.back()));
         // speciation
-        if ((float)(rand() % 1000) / 1000.0f < SPEC_RATE) {
+        if ((float) (rand() % 1000) / 1000.0f < SPEC_RATE) {
             bool foundSpecies = false;
             for (auto &s : species) {
                 if (s.second.size() == 0) continue;
                 unsigned long randomIndex = rand() % s.second.size();
-                if (ANN::compatibility(*s.second[randomIndex], population.back(), COMP_C0, COMP_C1, COMP_C2) < SPEC_THRESH) {
+                if (ANN::compatibility(*s.second[randomIndex], population.back(), COMP_C0, COMP_C1, COMP_C2) <
+                    SPEC_THRESH) {
                     population.back().setSpecies(s.first);
                     foundSpecies = true;
                     break;
@@ -111,8 +119,8 @@ void NEAT::crossover() {
             }
             if (!foundSpecies) {
                 // TODO: new species being killed immediately without time to develop
-                population.back().setSpecies(std::to_string(generationCount) + "-" + std::to_string(population.back().getId()));
-//                std::cout << "-!- ADDED NEW SPECIES: " << std::to_string(generationCount) + "-" + std::to_string(population.back().getId()) << std::endl;
+                population.back().setSpecies(
+                        std::to_string(generationCount) + "-" + std::to_string(population.back().getId()));
             }
         } else {
             population.back().setSpecies(p.first->getSpecies());
@@ -126,7 +134,7 @@ void NEAT::survivorSelection() {
     if (SS_ALG == "ABS") population.sort(ANN::ageSort);
     else if (SS_ALG == "FBS") population.sort(ANN::fitnessSort);
     // kill survivors
-    for (int i = 0; i < (float)POP_SIZE * POP_REPL; i++) {
+    for (int i = 0; i < POP_SIZE; i++) {
         removeFromSpecies(population.front());
         population.pop_front();
     }
@@ -135,6 +143,7 @@ void NEAT::survivorSelection() {
     generationCount++;
 }
 
+// speciation
 void NEAT::addToSpecies(ANN &ann) {
     species[ann.getSpecies()].push_back(&ann);
 }
@@ -151,11 +160,13 @@ void NEAT::removeFromSpecies(ANN &ann) {
     }
 }
 
+// info dump
 void NEAT::printGenerationInfo() {
     population.sort(ANN::fitnessSort);
-    std::cout << "Gen: " << generationCount << " - MaxFit: " << population.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: " << species.size() << std::endl;
-    if (generationCount %  1000 == 0 ) {
-//        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
-        population.back().dumpTopology("/home/charlie/Desktop/ann-dumps");
+    std::cout << "Gen: " << generationCount << " - MinFit: " << population.front().getFitness() << " - MaxFit: "
+              << population.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: "
+              << species.size() << std::endl;
+    if (generationCount % 500 == 0) {
+        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
     }
 }
