@@ -96,6 +96,23 @@ std::pair<int, int> Snake::right() {
     return directions[index];
 };
 
+std::pair<int, int> Snake::leftDiagonal() {
+    return std::pair<int, int>(left().first + direction().first, left().second + direction().second);
+};
+
+std::pair<int, int> Snake::rightDiagonal() {
+    return std::pair<int, int>(right().first + direction().first, right().second + direction().second);
+};
+
+std::pair<int, int> Snake::leftDiagonalBack() {
+    return std::pair<int, int>(left().first + (direction().first * -1), left().second + (direction().second * -1));
+};
+
+std::pair<int, int> Snake::rightDiagonalBack() {
+    return std::pair<int, int>(right().first + direction().first, right().second + (direction().second*-1));
+};
+
+
 std::string Snake::toString() {
     std::string s = "";
     for (auto it : body) {

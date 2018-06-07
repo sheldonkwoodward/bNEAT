@@ -32,7 +32,7 @@ void NEAT::populate() {
     population.clear();
     for (int p = 0; p < POP_SIZE; p++) {
         // add to population
-        population.emplace_back(3, 3, "0");
+        population.emplace_back(7, 3, "0");
         // setup constructs
         population.back().connectionMutation();
         population.back().setFitness(snake.fitness(population.back()));

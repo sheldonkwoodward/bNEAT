@@ -8,6 +8,7 @@ blessings = "*"
 networkx = "*"
 matplotlib = "*"
 pprint = "*"
+pygame = "*"
 
 [dev-packages]
 
