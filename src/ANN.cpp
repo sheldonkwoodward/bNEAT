@@ -526,17 +526,17 @@ void ANN::printGenome(bool showDisabled) {
 void ANN::dumpTopology(std::string file) {
     std::ofstream dumpFile;
     dumpFile.open(file, std::ios::app);
-    dumpFile << log;
+    dumpFile << "###\n";
+    for (auto cg : genome) {
+        if (!cg.getEnabled()) continue;
+        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
+    }
     dumpFile.close();
 }
 
 void ANN::dumpTrainLog(std::string file) {
     std::ofstream dumpFile;
     dumpFile.open(file, std::ios::app);
-    dumpFile << "###\n";
-    for (auto cg : genome) {
-        if (!cg.getEnabled()) continue;
-        dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
-    }
+    dumpFile << log;
     dumpFile.close();
 }
