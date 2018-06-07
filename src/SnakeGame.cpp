@@ -34,6 +34,7 @@ int SnakeGame::fitness(ANN &agent) {
     std::deque<float> output;
     food = std::nullopt;
     int time = -1;
+    float lifespan = 0;
 
     // record begin
     agent.resetLog();
@@ -41,6 +42,7 @@ int SnakeGame::fitness(ANN &agent) {
 
     do {
         time += 1;
+        lifespan +=1;
         if (!food) {
             generateFood();
         }
@@ -70,12 +72,13 @@ int SnakeGame::fitness(ANN &agent) {
 
         int max = static_cast<int>(std::distance(output.begin(), std::max_element(output.begin(), output.end())));
 
+//        std::cout << "max: "<< max << std::endl;
 
         std::pair<int, int> nextStep;
         switch (max) {
             case 0: {
                 nextStep = std::pair(snake.getHead().first + snake.left().first,
-                                     snake.getHead().second - snake.left().second);
+                                     snake.getHead().second + snake.left().second);
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
@@ -86,22 +89,23 @@ int SnakeGame::fitness(ANN &agent) {
             }
             case 1: {
                 nextStep = std::pair(snake.getHead().first + snake.direction().first,
-                                     snake.getHead().second - snake.direction().second);
+                                     snake.getHead().second + snake.direction().second);
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
                 } else {
+//                    std::cout << "here next : " << nextStep.first << ":" << nextStep.second << std::endl;
                     snake.move(nextStep);
                 }
                 break;
             }
             case 2: {
                 nextStep = std::pair(snake.getHead().first + snake.right().first,
-                                     snake.getHead().second - snake.right().second);
+                                     snake.getHead().second + snake.right().second);
                 if (nextStep == food) {
                     snake.eat(nextStep);
                     food = std::nullopt;
-                    time -= 10;
+                    time = 0;
                 } else {
                     snake.move(nextStep);
                 }
@@ -114,18 +118,20 @@ int SnakeGame::fitness(ANN &agent) {
     //Log end
     agent.addLog("###\n");
 
-    return snake.size() - 2;
+    return static_cast<int>(snake.size() - 2 + (lifespan / 100));
 }
 
 std::deque<float> SnakeGame::getDeque() {
     std::pair<int, int> direction = snake.direction();
     std::deque<float> input;
 
+    input.push_back(look(snake.getHead(), snake.leftDiagonalBack()));
     input.push_back(look(snake.getHead(), snake.left()));
     input.push_back(look(snake.getHead(), snake.leftDiagonal()));
     input.push_back(look(snake.getHead(), direction));
     input.push_back(look(snake.getHead(), snake.rightDiagonal()));
     input.push_back(look(snake.getHead(), snake.right()));
+    input.push_back(look(snake.getHead(), snake.rightDiagonalBack()));
     return input;
 }
 

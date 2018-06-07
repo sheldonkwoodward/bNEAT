@@ -40,6 +40,10 @@ public:
     std::pair<int, int> leftDiagonal();
 
     std::pair<int, int> rightDiagonal();
+
+    std::pair<int, int> leftDiagonalBack();
+
+    std::pair<int, int> rightDiagonalBack();
 };
 
 
