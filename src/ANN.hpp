@@ -23,7 +23,7 @@ class ANN {
     std::deque<Node> nodes;
     std::deque<ConnectionGene> genome;
     static std::vector<Gene> innovations;
-    unsigned int layerCount;
+    unsigned int layerNum;
 
     // node lists
     std::deque<Node*> inputNodes;
@@ -69,6 +69,9 @@ public:
     void incrementAge();
     unsigned long getId();
     std::string getLog();
+    int getLayerNum();
+    int getConnectNum();
+    int getNodeNum();
 
 public:
     // logging
@@ -78,6 +81,7 @@ public:
 public:
     // sort
     static bool fitnessSort(ANN &ann1, ANN &ann2);
+    static bool fitnessSortPtr(ANN* ann1, ANN* ann2);
     static bool ageSort(ANN &ann1, ANN &ann2);
 
 private:

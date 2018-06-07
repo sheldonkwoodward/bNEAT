@@ -13,16 +13,21 @@ NEAT::NEAT(int sizeX, int sizeY, unsigned int seed) : snake(sizeX, sizeY) {
 }
 
 // train
-void NEAT::train() {
+void NEAT::train(const std::string &dumpFile) {
     // training
     populate();
     int i = 0;
-    while (i > -1) {
+    while (generationCount <= 1000) {
         parentSelection();
         crossover();
-        survivorSelection();
-        if (generationCount % 50 == 0) printGenerationInfo();
+        survivorSelection(dumpFile);
+        if (generationCount % 10 == 0) printGenerationInfo();
         i++;
+        if (generationCount == 1000) {
+            std::sort(population.begin(), population.end(), ANN::fitnessSort);
+            population.back().dumpTrainLog("/Users/sheldonwoodward/Desktop/train-dump.txt");
+            population.back().dumpTopology("/Users/sheldonwoodward/Desktop/topology-dump.txt");
+        }
     }
 }
 
@@ -129,7 +134,7 @@ void NEAT::crossover() {
     }
 }
 
-void NEAT::survivorSelection() {
+void NEAT::survivorSelection(const std::string &dumpFile) {
     // sort population
     if (SS_ALG == "ABS") population.sort(ANN::ageSort);
     else if (SS_ALG == "FBS") population.sort(ANN::fitnessSort);
@@ -141,6 +146,8 @@ void NEAT::survivorSelection() {
     // increment age of survivors
     for (auto &ann : population) ann.incrementAge();
     generationCount++;
+
+    dumpGenerationInfo(dumpFile);
 }
 
 // speciation
@@ -166,7 +173,24 @@ void NEAT::printGenerationInfo() {
     std::cout << "Gen: " << generationCount << " - MinFit: " << population.front().getFitness() << " - MaxFit: "
               << population.back().getFitness() << " - PopSize: " << population.size() << " - SpeciesNum: "
               << species.size() << std::endl;
-    if (generationCount % 500 == 0) {
-        population.back().dumpTopology("/Users/sheldonwoodward/Desktop/ann-dumps");
+}
+
+void NEAT::dumpGenerationInfo(const std::string &dumpFile) {
+    std::sort(population.begin(), population.end(), ANN::fitnessSort);
+    // TODO: file setup
+    std::ofstream file;
+    file.open(dumpFile, std::ios::app);
+    for (auto &ann : population) {
+        // write to file
+        file << ann.getId() << ",";
+        file << generationCount << ",";
+        file << ann.getSpecies() << ",";
+        file << ann.getFitness() << ",";
+        file << "0,";  // TODO: food eaten
+        file << ann.getLayerNum() << ",";
+        file << ann.getConnectNum() << ",";
+        file << ann.getNodeNum() << ",";
+        file << ann.getAge() << "\n";
     }
+    file.close();
 }

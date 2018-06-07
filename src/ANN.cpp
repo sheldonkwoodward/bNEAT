@@ -18,7 +18,7 @@ ANN::ANN(unsigned long inputNum, unsigned long outputNum, std::string species) {
     // topology
     this->nodes = std::deque<Node>();
     this->genome = std::deque<ConnectionGene>();
-    this->layerCount = 1;
+    this->layerNum = 1;
 
     // node lists
     this->inputNodes = std::deque<Node*>();
@@ -221,6 +221,18 @@ std::string ANN::getLog() {
     return log;
 }
 
+int ANN::getLayerNum() {
+    return layerNum;
+}
+
+int ANN::getConnectNum() {
+    return genome.size();
+}
+
+int ANN::getNodeNum() {
+    return nodes.size();
+}
+
 // logging
 void ANN::addLog(std::string log) {
     this->log.append(log);
@@ -233,6 +245,10 @@ void ANN::resetLog() {
 // sort
 bool ANN::fitnessSort(ANN &ann1, ANN &ann2) {
     return ann1.fitness < ann2.fitness;
+}
+
+bool ANN::fitnessSortPtr(ANN *ann1, ANN *ann2) {
+    return ann1->fitness < ann2->fitness;
 }
 
 bool ANN::ageSort(ANN &ann1, ANN &ann2) {
@@ -282,7 +298,7 @@ void ANN::determineLayers() {
         determineLayers(on, 0, stack);
     }
     for (auto &node : inputNodes) {
-        node->setLayer(layerCount);
+        node->setLayer(layerNum);
     }
 }
 
@@ -290,8 +306,8 @@ void ANN::determineLayers(Node* node, unsigned int layer, std::deque<int> &stack
     stack.push_back(node->getNodeNum());
     if (node->getLayer() <= layer && std::find(outputNodes.begin(), outputNodes.end(), node) == outputNodes.end()) {
         node->setLayer(layer + 1);
-        if (layerCount <= layer + 1) {
-            layerCount = layer + 1;
+        if (layerNum <= layer + 1) {
+            layerNum = layer + 1;
         }
     }
     for (auto cg = genome.begin(); cg != genome.end(); ++cg) {
@@ -526,4 +542,5 @@ void ANN::dumpTrainLog(std::string file) {
         if (!cg.getEnabled()) continue;
         dumpFile << cg.getFrom()->getNodeNum() << " " << cg.getTo()->getNodeNum() << " " << cg.getWeight() << "\n";
     }
+    dumpFile.close();
 }
