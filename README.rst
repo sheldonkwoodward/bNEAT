@@ -1,5 +1,6 @@
 neat
 ----
+An implementation of NEAT based on Ken Stanley's implementation from 2002. This project is designed to teach itself how to play Snake and use Python for data analytics.
 
 Future Features
 ---------------
