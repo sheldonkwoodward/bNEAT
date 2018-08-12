@@ -1,5 +1,7 @@
 bNEAT
 -----
+|Build Status|
+
 An implementation of NEAT based on Ken Stanley's implementation from 2002. This project is designed to teach itself how to play Snake and use Python for data analytics.
 
 Created by Sheldon Woodward and Charles Lambert.
@@ -21,3 +23,7 @@ Todos
 - Make ConnectionGene a struct
 - Put GA parameters into a struct   
 - Tests
+
+
+.. |Build Status| image:: https://travis-ci.org/sheldonkwoodward/bNEAT.svg?branch=master
+    :target: https://travis-ci.org/sheldonkwoodward/bNEAT
