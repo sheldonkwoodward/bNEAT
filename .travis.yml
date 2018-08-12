@@ -1,7 +1,7 @@
 dist: trusty
 sudo: require
 
-language: generic
+language: cpp
 compiler: gcc
 
 addons:
