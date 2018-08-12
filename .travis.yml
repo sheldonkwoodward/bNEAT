@@ -1,8 +1,8 @@
 dist: trusty
 sudo: require
 
-language: cpp
-compiler: generic
+language: generic
+compiler: gcc
 
 addons:
   apt:
