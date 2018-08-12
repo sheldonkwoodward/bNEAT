@@ -19,5 +19,5 @@ script:
   - export CC=/usr/bin/gcc-6
   - export CXX=/usr/bin/g++-6
   - cmake --version
-  - cmake CMakeLists.txt
+  - cmake CMakeLists.txt -DCMAKE_VERBOSE_MAKEFILE=ON
   - cmake  --build . --target neat
