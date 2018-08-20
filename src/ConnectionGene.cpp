@@ -7,15 +7,15 @@
 unsigned int ConnectionGene::innovationCount = 0;
 
 // constructor
-ConnectionGene::ConnectionGene(Node* from, Node* to, float weight) : ConnectionGene(from, to, weight, innovationCount++) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight) : ConnectionGene(from, to, weight, innovationCount++) {
 
 }
 
-ConnectionGene::ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation) : ConnectionGene(from, to, weight, innovation, true) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation) : ConnectionGene(from, to, weight, innovation, true) {
 
 }
 
-ConnectionGene::ConnectionGene(Node* from, Node* to, float weight, unsigned int innovation, bool enabled) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation, bool enabled) {
     this->from = from;
     this->to = to;
     this->weight = weight;
@@ -26,60 +26,16 @@ ConnectionGene::ConnectionGene(Node* from, Node* to, float weight, unsigned int 
 
 // sort
 bool ConnectionGene::layerSort(ConnectionGene *cg1, ConnectionGene *cg2) {
-    if (cg1->getLayer() <= cg2->getLayer()) return false;
-    else if (cg1->getLayer() == cg2->getLayer() && cg1->getInnovation() < cg2->getInnovation()) return false;
+    if (cg1->layer <= cg2->layer) return false;
+    else if (cg1->layer == cg2->layer && cg1->innovation < cg2->innovation) return false;
     return true;
 }
 
 bool ConnectionGene::innovationSort(ConnectionGene &cg1, ConnectionGene &cg2) {
-    return cg1.getInnovation() < cg2.getInnovation();
+    return cg1.innovation < cg2.innovation;
 }
 
 bool ConnectionGene::innovationSortPtr(ConnectionGene *cg1, ConnectionGene *cg2) {
-    return cg1->getInnovation() < cg2->getInnovation();
+    return cg1->innovation < cg2->innovation;
 }
 
-Node *ConnectionGene::getFrom() {
-    return this->from;
-}
-
-Node *ConnectionGene::getTo() {
-    return this->to;
-}
-
-// get set
-float ConnectionGene::getWeight() {
-    return this->weight;
-}
-
-void ConnectionGene::setWeight(float weight) {
-    this->weight = weight;
-}
-
-bool ConnectionGene::getEnabled() {
-    return this->enabled;
-}
-
-void ConnectionGene::setEnabled(bool enabled) {
-    this->enabled = enabled;
-}
-
-int ConnectionGene::getInnovation() {
-    return innovation;
-}
-
-void ConnectionGene::setInnovation(int innovation) {
-    this->innovation = innovation;
-}
-
-unsigned int ConnectionGene::getLayer() {
-    return layer;
-}
-
-void ConnectionGene::setLayer(unsigned int layer) {
-    this->layer = layer;
-}
-
-unsigned int ConnectionGene::getInnovationCount() {
-    return innovationCount;
-}
