@@ -1,5 +1,5 @@
 #include <iostream>
-#include "src/NEAT.hpp"
+#include "NEAT.hpp"
 
 
 int main() {
