@@ -7,15 +7,11 @@
 unsigned int ConnectionGene::innovationCount = 0;
 
 // constructor
-ConnectionGene::ConnectionGene(Node *from, Node *to, float weight) : ConnectionGene(from, to, weight,
-                                                                                    innovationCount++) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight) : ConnectionGene(from, to, weight, innovationCount++) {
 
 }
 
-ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation) : ConnectionGene(from, to,
-                                                                                                             weight,
-                                                                                                             innovation,
-                                                                                                             true) {
+ConnectionGene::ConnectionGene(Node *from, Node *to, float weight, unsigned int innovation) : ConnectionGene(from, to, weight, innovation, true) {
 
 }
 

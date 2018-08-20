@@ -92,7 +92,7 @@ ANN::ANN(ANN &ann1, ANN &ann2)
             if (genomeItr2 != ann2.innovationSortedGenome.end())
                 ++genomeItr2;
         }
-            // disjoint innovation
+        // disjoint innovation
         else {
             // determine ptr with smallest innovation
             auto smallerGenomePtr = &genomeItr1;
@@ -341,24 +341,24 @@ void ANN::weightMutation() {
             randomConnection->weight = randomWeight();
             break;
         }
-            // change by 0.5% to 1.5%
+        // change by 0.5% to 1.5%
         case 1: {
             randomConnection->weight =
                     randomConnection->weight * ((float) (rand() % 1000) / 1000.0f + 0.5f);
             break;
         }
-            // add or subtract between 0 and 1
+        // add or subtract between 0 and 1
         case 2: {
             float randVal = ((float) (rand() % 2000 - 1000) / 1000.0f);
             randomConnection->weight = randomConnection->weight + randVal;
             break;
         }
-            // change sign of weight
+        // change sign of weight
         case 3: {
             randomConnection->weight = -randomConnection->weight;
             break;
         }
-            // swap two weights
+        // swap two weights
         case 4: {
             ConnectionGene *otherRandomConnection = &genome.at(rand() % genome.size());
             float savedWeight = randomConnection->weight;
@@ -432,8 +432,7 @@ void ANN::connectionMutation() {
             layerSortedNodes[randFrom]->getLayer() ==
             layerSortedNodes[randTo]->getLayer() ||
             connectionExists(layerSortedNodes[randFrom], layerSortedNodes[randTo]));
-    Gene newGene = Gene(layerSortedNodes[randFrom]->getNodeNum(),
-                        layerSortedNodes[randFrom]->getNodeNum(), 0);
+    Gene newGene = Gene(layerSortedNodes[randFrom]->getNodeNum(), layerSortedNodes[randFrom]->getNodeNum(), 0);
 
     // add to genome
     auto match = std::lower_bound(innovations.begin(), innovations.end(), newGene,
