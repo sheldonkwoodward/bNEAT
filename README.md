@@ -8,7 +8,7 @@ The learning algorithm is currently implemented to teach itself how to play Snak
 
 Click the picture below to see the trained bNEAT AI playing a game of snake. 
 
-[![IMAGE ALT TEXT HERE](https://i.imgur.com/Bwi3gF6.png)](https://www.youtube.com/watch?v=S4cb9tJu4vs)
+[![IMAGE ALT TEXT HERE](https://i.imgur.com/b16uInR.png)](https://www.youtube.com/watch?v=S4cb9tJu4vs)
 
 # Design Approach
 Why build an entire NEAT implementation from scratch? All for the sake of learning. This project was not built to be the most efficient or the prettiest but it did provide a **massive** amount of valuable experience with machine-learning.
