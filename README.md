@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/sheldonkwoodward/bNEAT.svg?branch=master)](https://travis-ci.org/sheldonkwoodward/bNEAT)
 ![Language](https://img.shields.io/badge/language-C%2B%2B17-orange.svg)
 
-bNEAT is an implementation of the NEAT (nerual evolution of augmenting topologies) machine-learning methodology and was created by Sheldon Woodward and Charles Lambert. 
+bNEAT is an implementation of the NEAT (neural evolution of augmenting topologies) machine-learning methodology and was created by Sheldon Woodward and Charles Lambert. 
 
 The learning algorithm is currently implemented to teach itself how to play Snake. In the future, the neural network and trainer can be abstracted and used for generic ML purposes.
 
@@ -13,7 +13,7 @@ The learning algorithm is currently implemented to teach itself how to play Snak
 # Design Approach
 Why build an entire NEAT implementation from scratch? All for the sake of learning. This project was not built to be the most efficient or the prettiest but it did provide a **massive** amount of valuable experience with machine-learning.
 
-The two main parts of bNEAT are the neural network and the genetic algorithm. As described in NEAT's design, genetic algorithms are used to augment ANN topolgies. This is in contrast to backpropogation which does not modify the structure of a topology. The GA parameters can be tweaked as needed for training, this allows a variety of ways to influence the learning behavior.
+The two main parts of bNEAT are the neural network and the genetic algorithm. As described in NEAT's design, genetic algorithms are used to augment ANN topologies. This is in contrast to backpropogation which does not modify the structure of a topology. The GA parameters can be tweaked as needed for training, this allows a variety of ways to influence the learning behavior.
 
 The training data is dumped to log files which are then interpreted by the Python parser. It was implemented using PyGame and produces the output shown in the video above.
 
