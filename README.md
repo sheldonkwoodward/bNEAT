@@ -6,7 +6,7 @@ bNEAT is an implementation of the NEAT (nerual evolution of augmenting topologie
 
 The learning algorithm is currently implemented to teach itself how to play Snake. In the future, the neural network and trainer can be abstracted and used for generic ML purposes.
 
-Click the picture below to see the trained bNEAT AI playing a game of snake. 
+**Click the picture below** to see the trained bNEAT AI playing a game of snake. 
 
 [![IMAGE ALT TEXT HERE](https://i.imgur.com/b16uInR.png)](https://www.youtube.com/watch?v=S4cb9tJu4vs)
 
